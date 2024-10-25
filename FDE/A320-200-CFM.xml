@@ -9,7 +9,33 @@
 		<description>A320-200 FDE with CFM56-5B4 Engines</description>
 	</fileheader>
 	
+	<aerodynamics file="FDE/Config/a320-aerodynamics.xml"/>
+	<external_reactions file="FDE/Config/a320-external-reactions"/>
+	<ground_reactions file="FDE/Config/a320-ground-reactions"/>
 	<metrics file="FDE/Config/a320-metrics"/>
+	
+	<system file="a320-libraries"/>
+	<system file="glass-effect"/>
+	<system file="a320-fbw"/>
+	<system file="a320-fcs"/>
+	<system file="a320-cfm56-5b4-engine-fadec"/>
+	<system file="a320-fuel"/>
+	<system file="a320-fwc"/>
+	<system file="a320-fwc-phases"/>
+	<system file="a320-spoiler"/>
+	<system file="a320-electrical"/>
+	<system file="a320-hydraulic"/>
+    <system file="a320-pneumatic"/>
+    <system file="a320-aircond"/> <!-- after pneu -->
+	<system file="a320-ignition"/>
+	<system file="a320-lights"/>
+	<system file="a320-engine-fire"/>
+	<system file="a320-adr"/>
+	<system file="a320-apu"/>
+	<system file="a320-oxygen"/>
+	<system file="a320-fmgc"/>
+	<system file="a320-misc"/>
+	<system file="a320-cockpit"/>
 	
 	<mass_balance>
 		<ixx unit="SLUG*FT2">709691</ixx>
@@ -85,8 +111,6 @@
 			</location>
 		</pointmass>
 	</mass_balance>
-	
-	<ground_reactions file="FDE/Config/a320-ground-reactions"/>
 	
 	<propulsion>
 		<engine file="cfm56-5b4_1">
@@ -236,32 +260,5 @@
 			<density unit="LBS/GAL">6.71</density>
 		</tank>
 	</propulsion>
-	
-	<system file="a320-libraries"/>
-	<system file="glass-effect"/>
-	<system file="a320-fbw"/>
-	<system file="a320-fcs"/>
-	<system file="a320-cfm56-5b4-engine-fadec"/>
-	<system file="a320-fuel"/>
-	<system file="a320-fwc"/>
-	<system file="a320-fwc-phases"/>
-	<system file="a320-spoiler"/>
-	<system file="a320-electrical"/>
-	<system file="a320-hydraulic"/>
-    <system file="a320-pneumatic"/>
-    <system file="a320-aircond"/> <!-- after pneu -->
-	<system file="a320-ignition"/>
-	<system file="a320-lights"/>
-	<system file="a320-engine-fire"/>
-	<system file="a320-adr"/>
-	<system file="a320-apu"/>
-	<system file="a320-oxygen"/>
-	<system file="a320-fmgc"/>
-	<system file="a320-misc"/>
-	<system file="a320-cockpit"/>
-	
-	<flight_control name="none"/>
-	<aerodynamics file="FDE/Config/a320-aerodynamics.xml"/>
-	<external_reactions file="FDE/Config/a320-external-reactions"/>
 
 </fdm_config>
