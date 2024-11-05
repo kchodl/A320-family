@@ -954,9 +954,9 @@ var reset_FMGC = func {
 #################
 # Managed Speed #
 #################
-var ktToMach = func(val) { return val * FMGCNodes.ktsToMachFactor.getValue(); }
-var machToKt = func(val) { return val * FMGCNodes.machToKtsFactor.getValue(); }
-			
+var ktsToMach = func(val) { return val * FMGCNodes.ktsToMachFactor.getValue(); }
+var machToKts = func(val) { return val * FMGCNodes.machToKtsFactor.getValue(); }
+
 var ManagedSPD = maketimer(0.25, func {
 	if (FMGCInternal.crzSet and FMGCInternal.costIndexSet) {
 		if (Custom.Input.spdManaged.getBoolValue()) {
@@ -1029,7 +1029,7 @@ var ManagedSPD = maketimer(0.25, func {
 				if (!FMGCInternal.mngKtsMach) {
 					FMGCInternal.mngSpd = math.clamp(FMGCInternal.mngSpdCmd, FMGCNodes.minspeed.getValue(), FMGCInternal.maxspeed);
 				} else {
-					FMGCInternal.mngSpd = math.clamp(FMGCInternal.mngSpdCmd, ktToMach(FMGCNodes.minspeed.getValue()), ktToMach(FMGCInternal.maxspeed));
+					FMGCInternal.mngSpd = math.clamp(FMGCInternal.mngSpdCmd, ktsToMach(FMGCNodes.minspeed.getValue()), ktsToMach(FMGCInternal.maxspeed));
 				}
 			} else {
 				FMGCInternal.mngSpd = FMGCInternal.mngSpdCmd;
