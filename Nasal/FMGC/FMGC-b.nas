@@ -161,9 +161,9 @@ var Output = {
 };
 
 var Text = {
-	lat: props.globals.initNode("/it-autoflight/mode/lat", "T/O", "STRING"),
-	spd: props.globals.initNode("/it-autoflight/mode/spd", "PITCH", "STRING"),
-	vert: props.globals.initNode("/it-autoflight/mode/vert", "T/O CLB", "STRING"),
+	lat: props.globals.initNode("/it-autoflight/text/lat", "T/O", "STRING"),
+	spd: props.globals.initNode("/it-autoflight/text/spd", "PITCH", "STRING"),
+	vert: props.globals.initNode("/it-autoflight/text/vert", "T/O CLB", "STRING"),
 	vertTemp: "T/O CLB",
 };
 
