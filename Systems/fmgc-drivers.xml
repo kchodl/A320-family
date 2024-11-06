@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 
-<!-- IT-AUTOFLIGHT -->
-<!-- Copyright (c) 2020 Joshua Davidson (Octal450) -->
+<!-- Copyright (c) 2024 Josh Davidson (Octal450) -->
 
 <PropertyList>
 	
@@ -659,7 +658,15 @@
 	</filter>
 	
 	<filter>
-		<name>Nav Course Error Deg</name>
+		<name>Nav Deflection</name>
+		<type>gain</type>
+		<gain>1.0</gain>
+		<input>/instrumentation/nav[0]/heading-needle-deflection-norm</input>
+		<output>/it-autoflight/internal/nav-deflection-norm</output>
+	</filter>
+	
+	<filter>
+		<name>Nav Course Track Error Deg</name>
 		<type>gain</type>
 		<gain>1.0</gain>
 		<input>
@@ -670,6 +677,24 @@
 			</offset>
 		</input>
 		<output>/it-autoflight/internal/nav-course-track-error-deg</output>
+		<period>
+			<min>-180</min>
+			<max>180</max>
+		</period>
+	</filter>
+	
+	<filter>
+		<name>Nav Course Heading Error Deg</name>
+		<type>gain</type>
+		<gain>1.0</gain>
+		<input>
+			<property>/instrumentation/nav[0]/radials/selected-deg</property>
+			<offset>
+				<property>/orientation/heading-magnetic-deg</property>
+				<scale>-1.0</scale>
+			</offset>
+		</input>
+		<output>/it-autoflight/internal/nav-course-heading-error-deg</output>
 		<period>
 			<min>-180</min>
 			<max>180</max>

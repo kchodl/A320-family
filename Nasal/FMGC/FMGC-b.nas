@@ -309,9 +309,15 @@ var ITAF = {
 		}
 		
 		# Autoland Logic
-		if (Output.latTemp == 2) {
-			if (Position.gearAglFtTemp <= 50) { # ALIGN
-				me.setLatMode(4);
+		if (Output.ap1Temp or Output.ap2Temp) { # Lateral ALIGN/ROLLOUT requires AP to function
+			if (Output.latTemp == 2) {
+				if (Position.gearAglFtTemp <= 50) {
+					me.setLatMode(4);
+				}
+			}
+		} else {
+			if (Output.latTemp == 4) {
+				me.activateLoc();
 			}
 		}
 		if (Output.vertTemp == 2) {
@@ -428,7 +434,7 @@ var ITAF = {
 		if (s == 1) {
 			if (Output.vert.getValue() != 6 and !Gear.wow1.getBoolValue() and !Gear.wow2.getBoolValue() and FMGCNodes.Power.FMGC1Powered.getBoolValue() and fbw.FBW.apOff == 0 and Position.gearAglFt.getValue() >= 100 and Position.airborne5Secs.getBoolValue()) {
 				Output.ap1.setBoolValue(1);
-				me.UpdateFma();
+				me.updateFmaAp();
 				Output.latTemp = Output.lat.getValue();
 				if (Output.ap2.getBoolValue() and !Output.gsArm.getBoolValue() and Output.latTemp != 2 and Output.latTemp != 4) {
 					me.ap2Master(0);
@@ -451,7 +457,7 @@ var ITAF = {
 		if (s == 1) {
 			if (Output.vert.getValue() != 6 and !Gear.wow1.getBoolValue() and !Gear.wow2.getBoolValue() and FMGCNodes.Power.FMGC2Powered.getBoolValue() and fbw.FBW.apOff == 0 and Position.gearAglFt.getValue() >= 100 and Position.airborne5Secs.getBoolValue()) {
 				Output.ap2.setBoolValue(1);
-				me.UpdateFma();
+				me.updateFmaAp();
 				Output.latTemp = Output.lat.getValue();
 				if (Output.ap1.getBoolValue() and !Output.gsArm.getBoolValue() and Output.latTemp != 2 and Output.latTemp != 4) {
 					me.ap1Master(0);
@@ -472,7 +478,7 @@ var ITAF = {
 	},
 	apOffFunction: func() {
 		if (!Output.ap1.getBoolValue() and !Output.ap2.getBoolValue()) { # Only do if both APs are off
-			me.UpdateFma();
+			me.updateFmaAp();
 			
 			if (Sound.enableApOff) {
 				Sound.apOff.setBoolValue(1);
@@ -506,11 +512,11 @@ var ITAF = {
 	fd1Master: func(s) {
 		if (s == 1) {
 			Output.fd1.setBoolValue(1);
-			me.UpdateFma();
+			me.updateFmaAp();
 		} else {
 			Output.fd1.setBoolValue(0);
 			if (!Output.fd2.getBoolValue()) {
-				me.UpdateFma();
+				me.updateFmaAp();
 			}
 		}
 		fmaFd();
@@ -523,11 +529,11 @@ var ITAF = {
 	fd2Master: func(s) {
 		if (s == 1) {
 			Output.fd2.setBoolValue(1);
-			me.UpdateFma();
+			me.updateFmaAp();
 		} else {
 			Output.fd2.setBoolValue(0);
 			if (!Output.fd1.getBoolValue()) {
-				me.UpdateFma();
+				me.updateFmaAp();
 			}
 		}
 		fmaFd();
@@ -882,7 +888,7 @@ var ITAF = {
 		Input.fpaAbs.setValue(abs(math.clamp(math.round(Internal.fpaTemp, 0.1), -9.9, 9.9)));
 	},
 	# Custom Stuff Below
-	UpdateFma: func() {
+	updateFmaAp: func() {
 		if (!Output.ap1.getBoolValue() and !Output.ap2.getBoolValue() and !Output.fd1.getBoolValue() and !Output.fd2.getBoolValue()) {
 			me.setLatMode(9);
 			me.setVertMode(9);
