@@ -268,7 +268,7 @@ var UpdateFma = {
 			}
 		} else if (latText == "T/O") {
 			setFmaText("rollMode", "RWY", genericCallback, "rollModeTime");
-		} else if (latText == "ALGN" or latText == "RLOU" or latText == "") {
+		} else if (latText == "ALIGN" or latText == "ROLLOUT" or latText == "") {
 			setFmaText("rollMode", " ", genericCallback, "rollModeTime");
 		}
 	},
