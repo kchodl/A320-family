@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<PropertyList>
+
+	<name type="string">takeoff</name>
+
+	<description>
+		The plane is ready for takeoff.
+
+		Start this state with --state=takeoff.
+	</description>
+
+	<overlay>
+		<environment>
+			<overlay type="bool">true</overlay>
+		</environment>
+	</overlay>
+</PropertyList>

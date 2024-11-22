@@ -191,7 +191,11 @@ setlistener("/sim/signals/fdm-initialized", func {
 	
 	spinning.stop();
 
-	if (getprop("/systems/acconfig/options/auto-ready-for-takeoff") == 1) {
+	if (getprop("/sim/aircraft-state") == "engine-start") {
+		acconfig.beforestart();
+	} else if (getprop("/sim/aircraft-state") == "taxi") {
+		acconfig.taxi();
+	} else if (getprop("/sim/aircraft-state") == "takeoff") {
 		acconfig.takeoff();
 	}
 });
@@ -590,7 +594,7 @@ var taxi_d = func {
 	setprop("/controls/gear/brake-right", 0);
 	setprop("/systems/acconfig/autoconfig-running", 0);
 	ps_load_dlg.close();
-	if (getprop("/systems/acconfig/options/auto-ready-for-takeoff") == 0) {
+	if (getprop("/environment/overlay") == 0) {
 		ps_loaded_dlg.open();
 	}
 	spinning.stop();

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<PropertyList>
+
+	<name type="string">taxi</name>
+
+	<description>
+		The plane has its engines running and you can start taxiing
+
+		Start this state with --state=taxi.
+	</description>
+
+	<overlay>
+		<environment>
+			<overlay type="bool">true</overlay>
+		</environment>
+	</overlay>
+</PropertyList>
