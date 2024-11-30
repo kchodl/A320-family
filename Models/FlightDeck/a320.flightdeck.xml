@@ -13719,15 +13719,25 @@
 	<animation>
 		<type>knob</type>
 		<object-name>radar_sys</object-name>
-		<property>controls/cockpit/wxr-radar-sw-pos</property>
-		<factor>-20</factor>
+		<property>/controls/wxradar/sys</property>
+		<factor>20</factor>
+		<offset-deg>-20</offset-deg>
 		<axis>
 			<object-name>radar_sys.axis</object-name>
 		</axis>
 		<action>
 			<binding>
 				<command>property-cycle</command>
+				<property>/controls/wxradar/sys</property>
+				<value>0</value>
+				<value>1</value>
+				<value>2</value>
+				<wrap>false</wrap>
+			</binding>
+			<binding>
+				<command>property-cycle</command>
 				<property>/instrumentation/efis[0]/inputs/wxr</property>
+				<value>1</value>
 				<value>0</value>
 				<value>1</value>
 				<wrap>false</wrap>
@@ -13735,6 +13745,7 @@
 			<binding>
 				<command>property-cycle</command>
 				<property>/instrumentation/efis[1]/inputs/wxr</property>
+				<value>1</value>
 				<value>0</value>
 				<value>1</value>
 				<wrap>false</wrap>
@@ -13742,6 +13753,7 @@
 			<binding>
 				<command>property-cycle</command>
 				<property>/instrumentation/wxr/enabled</property>
+				<value>1</value>
 				<value>0</value>
 				<value>1</value>
 				<wrap>false</wrap>
@@ -13759,6 +13771,218 @@
 				<command>set-tooltip</command>
 				<tooltip-id>wxr-radar-lbl</tooltip-id>
 				<label>Display weather on ND</label>
+			</binding>
+		</hovered>
+	</animation>
+
+	<!-- WX Radar Mode Selector -->
+	<animation>
+		<type>knob</type>
+		<object-name>radar_mode</object-name>
+		<object-name>radar_mode.mark</object-name>
+		<property>controls/wxradar/mode</property>
+		<drag-scale-px>15</drag-scale-px>
+		<factor>53</factor>
+		<offset-deg>-53</offset-deg>
+		<axis>
+			<object-name>radar_mode.axis</object-name>
+		</axis>
+		<action>
+			<repeatable>false</repeatable>
+			<binding>
+				<command>property-cycle</command>
+				<property>controls/wxradar/mode</property>
+				<value>0</value>
+				<value>1</value>
+				<value>2</value>
+				<value>3</value>
+				<wrap>false</wrap>
+			</binding>
+			<binding>
+				<command>nasal</command>
+				<script>setprop("sim/sound/knb1", 1);</script>
+			</binding>
+		</action>
+		<hovered>
+			<binding>
+				<condition>
+					<property>/options/system/toggle-tooltips</property>
+				</condition>
+				<command>set-tooltip</command>
+				<tooltip-id>wxradar_mode_switch_lbl</tooltip-id>
+				<label>Weather radar mode selector</label>
+			</binding>
+		</hovered>
+	</animation>
+
+	<!-- WX Radar Gain -->
+	<animation>
+		<type>knob</type>
+		<object-name>radar_gain</object-name>
+		<property>controls/wxradar/gain-knb</property>
+		<factor>270</factor>
+		<offset-deg>-270</offset-deg>
+		<axis>
+			<object-name>radar_gain.axis</object-name>
+		</axis>
+		<action>
+			<binding>
+				<command>property-adjust</command>
+				<property>controls/wxradar/gain-knb</property>
+				<factor>0.05</factor>
+				<min>0</min>
+				<max>1</max>
+				<wrap>false</wrap>
+			</binding>
+		</action>
+		<hovered>
+			<binding>
+				<condition>
+					<property>/options/system/toggle-tooltips</property>
+				</condition>
+				<command>set-tooltip</command>
+				<tooltip-id>wxradar-gain-lbl</tooltip-id>
+				<label>Weather radar gain control</label>
+			</binding>
+		</hovered>
+	</animation>
+
+	<!-- WX Radar Tilt -->
+	<animation>
+		<type>knob</type>
+		<object-name>radar_tilt</object-name>
+		<property>controls/wxradar/tilt-knb</property>
+		<factor>260</factor>
+		<offset-deg>-190</offset-deg>
+		<axis>
+			<object-name>radar_tilt.axis</object-name>
+		</axis>
+		<action>
+			<binding>
+				<command>property-adjust</command>
+				<property>controls/wxradar/tilt-knb</property>
+				<factor>0.05</factor>
+				<min>0</min>
+				<max>1</max>
+				<wrap>false</wrap>
+			</binding>
+		</action>
+		<hovered>
+			<binding>
+				<condition>
+					<property>/options/system/toggle-tooltips</property>
+				</condition>
+				<command>set-tooltip</command>
+				<tooltip-id>wxradar-tilt-lbl</tooltip-id>
+				<label>Weather radar tilt control</label>
+			</binding>
+		</hovered>
+	</animation>
+
+	<!-- WX Radar GCS -->
+	<animation>
+		<type>knob</type>
+		<object-name>radar_gcs</object-name>
+		<property>controls/wxradar/gcs</property>
+		<factor>40</factor>
+		<offset-deg>-20</offset-deg>
+		<drag-direction>horizontal</drag-direction>
+		<axis>
+			<object-name>radar_gcs.axis</object-name>
+		</axis>
+		<action>
+			<binding>
+				<command>property-cycle</command>
+				<property>controls/wxradar/gcs</property>
+				<value>0</value>
+				<value>1</value>
+				<wrap>false</wrap>
+			</binding>
+			<binding>
+				<command>nasal</command>
+				<script>setprop("sim/sound/switch1", 1);</script>
+			</binding>
+		</action>
+		<hovered>
+			<binding>
+				<condition>
+					<property>/options/system/toggle-tooltips</property>
+				</condition>
+				<command>set-tooltip</command>
+				<tooltip-id>wxradar-gcs-lbl</tooltip-id>
+				<label>Toggle weather radar GCS</label>
+			</binding>
+		</hovered>
+	</animation>
+
+	<!-- WX Radar Multiscan -->
+	<animation>
+		<type>knob</type>
+		<object-name>radar_multiscan</object-name>
+		<property>controls/wxradar/multiscan</property>
+		<factor>40</factor>
+		<offset-deg>-20</offset-deg>
+		<drag-direction>horizontal</drag-direction>
+		<axis>
+			<object-name>radar_multiscan.axis</object-name>
+		</axis>
+		<action>
+			<binding>
+				<command>property-cycle</command>
+				<property>controls/wxradar/multiscan</property>
+				<value>0</value>
+				<value>1</value>
+				<wrap>false</wrap>
+			</binding>
+			<binding>
+				<command>nasal</command>
+				<script>setprop("sim/sound/switch1", 1);</script>
+			</binding>
+		</action>
+		<hovered>
+			<binding>
+				<condition>
+					<property>/options/system/toggle-tooltips</property>
+				</condition>
+				<command>set-tooltip</command>
+				<tooltip-id>wxradar-multiscan-lbl</tooltip-id>
+				<label>Toggle weather radar multiscan</label>
+			</binding>
+		</hovered>
+	</animation>
+
+	<!-- WX Radar PWS -->
+	<animation>
+		<type>knob</type>
+		<object-name>radar_pws</object-name>
+		<property>controls/wxradar/pws</property>
+		<factor>40</factor>
+		<offset-deg>-20</offset-deg>
+		<drag-direction>horizontal</drag-direction>
+		<axis>
+			<object-name>radar_pws.axis</object-name>
+		</axis>
+		<action>
+			<binding>
+				<command>property-cycle</command>
+				<property>controls/wxradar/pws</property>
+				<value>0</value>
+				<value>1</value>
+				<wrap>false</wrap>
+			</binding>
+			<binding>
+				<command>nasal</command>
+				<script>setprop("sim/sound/switch1", 1);</script>
+			</binding>
+		</action>
+		<hovered>
+			<binding>
+				<condition>
+					<property>/options/system/toggle-tooltips</property>
+				</condition>
+				<command>set-tooltip</command>
+				<tooltip-id>wxradar-pws-lbl</tooltip-id>
+				<label>Toggle weather radar PWS</label>
 			</binding>
 		</hovered>
 	</animation>

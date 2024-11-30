@@ -1199,6 +1199,15 @@
 			<lefttrayext type="double">0</lefttrayext>
 			<righttrayext type="double">0</righttrayext>
 		</tray>
+		<wxradar>
+			<gain-knb type="double">0.55</gain-knb>
+			<gcs type="bool">1</gcs>
+			<mode type="int">1</mode>
+			<multiscan type="bool">1</multiscan>
+			<pws type="bool">1</pws>
+			<sys type="int">1</sys>
+			<tilt-knb type="double">0.5</tilt-knb>
+		</wxradar>
 	</controls>
 	
 	<engines>
