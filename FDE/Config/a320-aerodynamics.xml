@@ -431,7 +431,7 @@
 				<property>aero/qbar-psf</property>
 				<property>metrics/Sw-sqft</property>
 				<abs><toradians><property>/systems/fcs/aileron-l/final-deg</property></toradians></abs>
-				<value>0.0029271086286386</value>
+				<value>0.0029271</value>
 			</product>
 		</function>
 		
@@ -441,7 +441,7 @@
 				<property>aero/qbar-psf</property>
 				<property>metrics/Sw-sqft</property>
 				<abs><toradians><property>/systems/fcs/aileron-r/final-deg</property></toradians></abs>
-				<value>0.0029271086286386</value>
+				<value>0.0029271</value>
 			</product>
 		</function>
 		
@@ -451,7 +451,7 @@
 				<property>aero/qbar-psf</property>
 				<property>metrics/Sw-sqft</property>
 				<toradians><property>fcs/spoiler-left-deg</property></toradians>
-				<value>0.025369566928</value>
+				<value>0.0253695</value>
 			</product>
 		</function>
 		
@@ -461,7 +461,7 @@
 				<property>aero/qbar-psf</property>
 				<property>metrics/Sw-sqft</property>
 				<toradians><property>fcs/spoiler-right-deg</property></toradians>
-				<value>0.025369566928</value>
+				<value>0.0253695</value>
 			</product>
 		</function>
 		
