@@ -74,12 +74,6 @@ var canvas_livery = {
 			resolution = maxRes;
 			me.targets[name].resolution = maxRes;
 		}
-		# Make sure we never load too large textures
-		maxSupportedRes = getprop("/sim/rendering/max-texture-size");
-		if (resolution > maxSupportedRes) {
-			resolution = maxSupportedRes;
-			me.targets[name].resolution = maxSupportedRes;
-		}
 		var (major, minor, patch) = split(".", getprop("/sim/version/flightgear"));
 		if (num(major) == 2020 and num(minor) < 4) {
 			me.targets[name].canvas = canvas.new({
