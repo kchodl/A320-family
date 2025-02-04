@@ -89,6 +89,54 @@
 	
 	</channel>
 	
+	<channel name="Aileron Logic">
+		
+		<switch name="/systems/fcs/aileron-l/pressure-switch-or">
+			<default value="0"/>
+			<test logic="OR" value="1">
+				<test logic="AND">
+					/systems/fctl/elac1 eq 1
+					/systems/hydraulic/blue-psi ge 1500
+				</test>
+				<test logic="AND">
+					/systems/fctl/elac2 eq 1
+					/systems/hydraulic/green-psi ge 1500
+				</test>
+			</test>
+		</switch>
+		
+		<switch name="/systems/fcs/aileron-l/actuator-enabled">
+			<default value="0"/>
+			<test logic="AND" value="1">
+				/systems/fcs/aileron-l/pressure-switch-or eq 1
+				/systems/failures/aileron-left eq 0
+			</test>
+		</switch>
+		
+		<switch name="/systems/fcs/aileron-r/pressure-switch-or">
+			<default value="0"/>
+			<test logic="OR" value="1">
+				<test logic="AND">
+					/systems/fctl/elac1 eq 1
+					/systems/hydraulic/green-psi ge 1500
+				</test>
+				<test logic="AND">
+					/systems/fctl/elac2 eq 1
+					/systems/hydraulic/blue-psi ge 1500
+				</test>
+			</test>
+		</switch>
+		
+		<switch name="/systems/fcs/aileron-r/actuator-enabled">
+			<default value="0"/>
+			<test logic="AND" value="1">
+				/systems/fcs/aileron-r/pressure-switch-or eq 1
+				/systems/failures/aileron-right eq 0
+			</test>
+		</switch>
+	
+	</channel>
+	
 	<channel name="Aileron L">
 		
 		<summer name="/systems/fcs/aileron-l/input">
@@ -113,38 +161,20 @@
 			<function>
 				<sum>
 					<property>/systems/fcs/aileron-l/input</property>
-					<table>
-						<independentVar lookup="row">/fdm/jsbsim/fcs/flap-pos-deg</independentVar>
-						<tableData>
-							1  0.00
-							5  0.26
-						</tableData>
-					</table>
+					<product>
+						<property>/systems/fcs/aileron-l/actuator-enabled</property>
+						<property>/systems/fcs/aileron-r/actuator-enabled</property>
+						<table>
+							<independentVar lookup="row">/fdm/jsbsim/fcs/flap-pos-deg</independentVar>
+							<tableData>
+								1  0.00
+								5  0.26
+							</tableData>
+						</table>
+					</product>
 				</sum>
 			</function>
 		</fcs_function>
-		
-		<switch name="/systems/fcs/aileron-l/pressure-switch-or">
-			<default value="0"/>
-			<test logic="OR" value="1">
-				<test logic="AND">
-					/systems/fctl/elac1 eq 1
-					/systems/hydraulic/blue-psi ge 1500
-				</test>
-				<test logic="AND">
-					/systems/fctl/elac2 eq 1
-					/systems/hydraulic/green-psi ge 1500
-				</test>
-			</test>
-		</switch>
-		
-		<switch name="/systems/fcs/aileron-l/actuator-enabled">
-			<default value="0"/>
-			<test logic="AND" value="1">
-				/systems/fcs/aileron-l/pressure-switch-or eq 1
-				/systems/failures/aileron-left eq 0
-			</test>
-		</switch>
 		
 		<switch name="/systems/fcs/aileron-l/switch">
 			<default value="/systems/fcs/aileron-droop"/>
@@ -214,38 +244,20 @@
 						<property>/systems/fcs/aileron-r/input</property>
 						<value>-1.0</value>
 					</product>
-					<table>
-						<independentVar lookup="row">/fdm/jsbsim/fcs/flap-pos-deg</independentVar>
-						<tableData>
-							1  0.00
-							5  0.26
-						</tableData>
-					</table>
+					<product>
+						<property>/systems/fcs/aileron-l/actuator-enabled</property>
+						<property>/systems/fcs/aileron-r/actuator-enabled</property>
+						<table>
+							<independentVar lookup="row">/fdm/jsbsim/fcs/flap-pos-deg</independentVar>
+							<tableData>
+								1  0.00
+								5  0.26
+							</tableData>
+						</table>
+					</product>
 				</sum>
 			</function>
 		</fcs_function>
-		
-		<switch name="/systems/fcs/aileron-r/pressure-switch-or">
-			<default value="0"/>
-			<test logic="OR" value="1">
-				<test logic="AND">
-					/systems/fctl/elac1 eq 1
-					/systems/hydraulic/green-psi ge 1500
-				</test>
-				<test logic="AND">
-					/systems/fctl/elac2 eq 1
-					/systems/hydraulic/blue-psi ge 1500
-				</test>
-			</test>
-		</switch>
-		
-		<switch name="/systems/fcs/aileron-r/actuator-enabled">
-			<default value="0"/>
-			<test logic="AND" value="1">
-				/systems/fcs/aileron-r/pressure-switch-or eq 1
-				/systems/failures/aileron-right eq 0
-			</test>
-		</switch>
 		
 		<switch name="/systems/fcs/aileron-r/switch">
 			<default value="/systems/fcs/aileron-droop"/>
@@ -460,15 +472,23 @@
 	
 	<channel name="Stabilizer">
 		
-		<switch name="/systems/fcs/stabilizer/rate">
-			<default value="0"/> <!-- Only mechanical input to hyd actuator. So it does need hydraulic power -->
+		<switch name="/systems/fcs/stabilizer/actuator-enabled">
+			<default value="0"/>
 			<test value="0">
 				/systems/failures/fctl/ths-jam eq 1
 			</test>
-			<test logic="OR" value="0.25">
+			<test logic="OR" value="1">
 				/systems/hydraulic/yellow-psi ge 1500
 				/systems/hydraulic/green-psi ge 1500
 				/systems/acconfig/autoconfig-running eq 1
+			</test>
+			<output>/systems/fbw/pitch/stabilizer-enabled</output>
+		</switch>
+		
+		<switch name="/systems/fcs/stabilizer/rate">
+			<default value="0"/> <!-- Only mechanical input to hyd actuator. It needs hydraulic power to move -->
+			<test value="0.25">
+				/systems/fcs/stabilizer/actuator-enabled eq 1
 			</test>
 		</switch>
 		

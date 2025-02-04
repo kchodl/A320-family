@@ -12,6 +12,7 @@
 	<property value="0">/systems/fbw/pitch/e-i-n</property>
 	<property value="0">/systems/fbw/pitch/pid</property>
 	<property value="1">/systems/fbw/pitch/mixer/sidestick-gain-feedback</property>
+	<property value="0">/systems/fbw/pitch/stabilizer-enabled</property>
 	<property value="0">/systems/fbw/spoiler-output</property>
 	<property value="3">/systems/fbw/rate-c1</property>
 	
@@ -2029,6 +2030,7 @@
 				/position/gear-agl-ft ge /systems/fbw/pitch/autotrim-height
 				attitude/roll-rad lt 0.628319
 				attitude/roll-rad gt -0.628319
+				/systems/fbw/pitch/stabilizer-enabled eq 1
 				/systems/fbw/pitch/out-of-trim eq 1
 				/systems/fbw/pitch/pid-switched gt 0.001
 				/systems/fbw/pitch/load-factor ge 0.5
@@ -2042,6 +2044,7 @@
 				/position/gear-agl-ft ge /systems/fbw/pitch/autotrim-height
 				attitude/roll-rad lt 0.628319
 				attitude/roll-rad gt -0.628319
+				/systems/fbw/pitch/stabilizer-enabled eq 1
 				/systems/fbw/pitch/out-of-trim eq 1
 				/systems/fbw/pitch/pid-switched lt -0.001
 				/systems/fbw/pitch/load-factor ge 0.5
