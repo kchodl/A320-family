@@ -222,6 +222,7 @@
 	</limits>
 	
 	<options n="0">
+		<config-name type="string">A320neo-PW</config-name>
 		<eng type="string">CFM</eng> <!-- PW PurePower uses N1, not EPR... so I use CFM, and no N1 mode switches -->
 		<eng-int type="int">0</eng-int>
 		<engine-name type="string">PW1127G-JM</engine-name>

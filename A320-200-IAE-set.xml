@@ -222,6 +222,7 @@
 	</limits>
 	
 	<options n="0">
+		<config-name type="string">A320-200-IAE</config-name>
 		<eng type="string">IAE</eng>
 		<eng-int type="int">1</eng-int>
 		<engine-name type="string">V2527-A5</engine-name>

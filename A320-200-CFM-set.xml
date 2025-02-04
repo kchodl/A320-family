@@ -222,6 +222,7 @@
 	</limits>
 	
 	<options n="0">
+		<config-name type="string">A320-200-CFM</config-name>
 		<eng type="string">CFM</eng>
 		<eng-int type="int">0</eng-int>
 		<engine-name type="string">CFM56-5B4</engine-name>

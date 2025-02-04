@@ -255,6 +255,7 @@ var Modes = {
 };
 
 var Options = {
+	configName: props.globals.getNode("/options/config-name"),
 	eng: props.globals.getNode("/options/eng"),
 };
 
@@ -280,7 +281,6 @@ var Services = {
 };
 
 var Sim = {
-	aero: props.globals.getNode("/sim/aero"),
 	aircraft: props.globals.getNode("/sim/aircraft"),
 	CurrentView: {
 		fieldOfView: props.globals.getNode("/sim/current-view/field-of-view", 1),
