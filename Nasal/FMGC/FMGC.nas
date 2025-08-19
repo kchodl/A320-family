@@ -970,8 +970,10 @@ var ManagedSPD = maketimer(0.25, func {
 			# Phase: 0 is Preflight 1 is Takeoff 2 is Climb 3 is Cruise 4 is Descent 5 is Decel/Approach 6 is Go Around 7 is Done
 			if (pts.Instrumentation.AirspeedIndicator.indicatedMach.getValue() > mng_alt_mach and (FMGCInternal.phase == 2 or FMGCInternal.phase == 3)) {
 				FMGCInternal.machSwitchover = 1;
-			} elsif (pts.Instrumentation.AirspeedIndicator.indicatedSpdKt.getValue() > mng_alt_spd and (FMGCInternal.phase == 4 or FMGCInternal.phase == 5)) {
-				FMGCInternal.machSwitchover = 0;
+			} elsif (FMGCInternal.phase == 4 or FMGCInternal.phase == 5) {
+				if (altitude <= 28000 or machToKts(mng_alt_mach) > FMGCInternal.maxspeed - 5) {
+					FMGCInternal.machSwitchover = 0;
+				}
 			}
 			
 			var waypoint = flightPlanController.flightplans[2].getWP(FPLN.currentWP.getValue());
