@@ -6,3 +6,5 @@ MyDevWIP
 *.swp
 *.swo
 .DS_Store
+
+git.*.bat
