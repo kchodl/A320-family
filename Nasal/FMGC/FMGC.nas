@@ -1016,7 +1016,7 @@ var ManagedSPD = maketimer(0.25, func {
 					} else {
 						for (var i = fmgc.flightPlanController.currentToWptIndex.getValue(); i <= 1000; i += 1) {
 							spdCstr = fmgc.flightPlanController.flightplans[2].getWP(i).speed_cstr;
-							if (spdCstr != 0 and spdCstr != nil) {
+							if (spdCstr != nil and spdCstr != 0) {
 								break
 							}
 						}
