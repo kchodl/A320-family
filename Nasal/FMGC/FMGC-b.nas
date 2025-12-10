@@ -1013,41 +1013,58 @@ var ITAF = {
 	# Max VS is -4000 fpm
 	# If aircraft is above the ECON speed range then it will descend at -1500 fpm to slow down.
 	# If aircraft requires a descent rate of more than -3000 fpm and thrust is at idle then moreDrag message is shown on FMA.
-	getVs: func() {
-		cstr_info = fmgc.flightPlanController.getDesAltConst();
-		altCstr = cstr_info[0];
-		distToCstr = cstr_info[1];
-		is_geo = cstr_info[2];
-		if (Position.indicatedAltitudeFt.getValue() >= 10000 and Position.indicatedAltitudeFt.getValue() <= (10000 + fmgc.flightPlanController.getTenThousandSlowDownAlt()) and Velocities.indicatedAirspeedKt.getValue() - 250 >= 5) {
-			return -1000; # Make the aircraft slow to 250 at 10,000 feet
-		}
-		deltaAltitude = (altCstr - Position.indicatedAltitudeFt.getValue());
-		gs = pts.Velocities.groundspeedKt.getValue();
-		vs = (deltaAltitude * gs) / (60 * distToCstr); # Calculate vertical speed to next waypoint
-		idleDescent = 0;
+        getVs: func() {
+                cstr_info = fmgc.flightPlanController.getDesAltConst();
+                altCstr = cstr_info[0];
+                distToCstr = cstr_info[1];
+                is_geo = cstr_info[2];
+                idealVs = cstr_info[3];
+                if (Position.indicatedAltitudeFt.getValue() >= 10000 and Position.indicatedAltitudeFt.getValue() <= (10000 + fmgc.flightPlanController.getTenThousandSlowDownAlt()) and Velocities.indicatedAirspeedKt.getValue() - 250 >= 5) {
+                        return -1000; # Make the aircraft slow to 250 at 10,000 feet
+                }
+                if (distToCstr <= 0) {
+                        distToCstr = 0.1; # Prevent divide by zero while keeping a shallow intercept
+                }
+                deltaAltitude = (altCstr - Position.indicatedAltitudeFt.getValue());
+                gs = pts.Velocities.groundspeedKt.getValue();
+                vs = (deltaAltitude * gs) / (60 * distToCstr); # Calculate vertical speed to next waypoint
+                vdev = me.calculateVdev();
+                idleDescent = 0;
 
-		if (((vs > (-1*gs*5)) or me.calculateVdev() < -500) and (is_geo == 0)) {
-			idleDescent = 0;
-			return -1000; 
-		} else if (is_geo == 0) {
-			idleDescent = 1;
-			vs = Internal.targetFpmFlch.getValue();
-		}
+                if (is_geo == 1) {
+                        if (idealVs != nil and idealVs != 0) {
+                                vs = idealVs; # Fly the geometric path after the first constraint
+                        }
+                        if (vdev > 250) {
+                                vs -= 500; # Increase descent rate if high on path
+                        } else if (vdev < -250) {
+                                vs += 500; # Shallow the descent if low on path
+                        }
+                        if (abs(vdev) <= 200) {
+                                idleDescent = 1; # Only stay at idle when we are effectively on profile
+                        }
+                } else {
+                        if (((vs > (-1*gs*5)) or vdev < -500)) {
+                                return -1000; # Force a gentle intercept when below path or needing to shallow out
+                        }
+                        idleDescent = 1;
+                        vs = Internal.targetFpmFlch.getValue();
+                }
 
-		if (vs < -4000) {
-			vs = -4000;
-		}
-		if (me.calculateVdev() > 800 and (Internal.enginesBothAtIdle.getValue())) {
-			Internal.moreDrag.setBoolValue(1);
-		} else {
-			Internal.moreDrag.setBoolValue(0);
-		}
-		
-		if (vs > 0) {
-			vs = 0; # Don't allow positive vertical speed
-		}
-		return vs;
-	},
+                if (vs < -4000) {
+                        vs = -4000;
+                }
+                if (vdev > 800 and (Internal.enginesBothAtIdle.getValue())) {
+                        Internal.moreDrag.setBoolValue(1);
+                } else {
+                        Internal.moreDrag.setBoolValue(0);
+                }
+
+                if (vs > 0) {
+                        vs = 0; # Don't allow positive vertical speed
+                }
+                return vs;
+        },
 	syncFpa: func() {
 		Internal.fpaTemp = Internal.fpa.getValue();
 		Input.fpa.setValue(math.clamp(math.round(Internal.fpaTemp, 0.1), -9.9, 9.9));
