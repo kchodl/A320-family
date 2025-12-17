@@ -183,6 +183,10 @@ var PNEU = {
 		# Legacy pressurization
 		cabinalt = getprop("/systems/pressurization/cabinalt");
 		targetalt = getprop("/systems/pressurization/targetalt");
+		deadbandft = 150;
+		if (!wowl and !wowr and math.abs(targetalt - cabinalt) < deadbandft) {
+			targetalt = cabinalt; # locally clamp to avoid hunting; property remains owned by filters
+		}
 		ambient = getprop("/systems/pressurization/ambientpsi");
 		cabinpsi = getprop("/systems/pressurization/cabinpsi");
 		state1 = systems.FADEC.detentText[0].getValue();
