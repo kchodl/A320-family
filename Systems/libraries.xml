@@ -314,16 +314,10 @@
 		<update-interval-secs>0.1</update-interval-secs>
 		<input>
 			<condition>
-				<or>
-					<equals>
-						<property>/gear/gear[1]/wow</property>
-						<value>1</value>
-					</equals>
-					<less-than>
-						<property>/systems/pressurization/targetalt-cmd</property>
-						<property>/systems/pressurization/cabinalt-norm</property>
-					</less-than>
-				</or>
+				<equals>
+					<property>/gear/gear[1]/wow</property>
+					<value>1</value>
+				</equals>
 			</condition>
 			<property>/systems/pressurization/cabinalt-norm</property>
 		</input>
@@ -472,7 +466,7 @@
 					<value>1</value>
 				</equals>
 			</condition>
-			<property>/systems/pressurization/outflowpos-norm-cmd</property>
+			<property>/systems/pressurization/outflowpos-norm-cmd-filt</property>
 		</input>
 		<output>/systems/pressurization/outflowpos-norm</output>   
 	</filter>

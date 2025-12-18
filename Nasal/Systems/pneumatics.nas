@@ -18,6 +18,7 @@ var auto = nil;
 var speed = nil;
 var ditch = nil;
 var outflowpos = nil;
+var lastOutflowCmd = 0;
 var targetvs = nil; 
 var eng1_starter = nil;
 var eng2_starter = nil;
@@ -182,23 +183,34 @@ var PNEU = {
 		
 		# Legacy pressurization
 		cabinalt = getprop("/systems/pressurization/cabinalt");
-		targetalt = getprop("/systems/pressurization/targetalt");
+	targetalt = getprop("/systems/pressurization/targetalt");
+	deadbandft = 150;
+	if (!wowl and !wowr and math.abs(targetalt - cabinalt) < deadbandft) {
+		targetalt = cabinalt; # locally clamp to avoid hunting; property remains owned by filters
+	}
 		ambient = getprop("/systems/pressurization/ambientpsi");
 		cabinpsi = getprop("/systems/pressurization/cabinpsi");
 		state1 = systems.FADEC.detentText[0].getValue();
 		state2 = systems.FADEC.detentText[1].getValue();
-		pressmode = getprop("/systems/pressurization/mode");
-		vs = getprop("/systems/pressurization/vs-norm");
-		manvs = getprop("/systems/pressurization/manvs-cmd");
-		pause = getprop("/sim/freeze/master");
-		auto = getprop("/systems/pressurization/auto");
-		speed = getprop("velocities/groundspeed-kt");
-		ditch = getprop("/systems/pressurization/ditchingpb");
-		outflowpos = getprop("/systems/pressurization/outflowpos");
-		targetvs = getprop("/systems/pressurization/targetvs");
-		
-		setprop("/systems/pressurization/diff-to-target", targetalt - cabinalt); 
-		setprop("/systems/pressurization/deltap", cabinpsi - ambient); 
+			pressmode = getprop("/systems/pressurization/mode");
+			vs = getprop("/systems/pressurization/vs-norm");
+			manvs = getprop("/systems/pressurization/manvs-cmd");
+			pause = getprop("/sim/freeze/master");
+			auto = getprop("/systems/pressurization/auto");
+			speed = getprop("velocities/groundspeed-kt");
+	ditch = getprop("/systems/pressurization/ditchingpb");
+	outflowpos = getprop("/systems/pressurization/outflowpos");
+	targetvs = getprop("/systems/pressurization/targetvs");
+	outflowCmdRaw = getprop("/systems/pressurization/outflowpos-norm-cmd") or 0;
+	# Schmitt-trigger hysteresis: update only when raw deviates beyond band
+	hyst = 0.02; # ~2% travel
+	if (outflowCmdRaw > lastOutflowCmd + hyst or outflowCmdRaw < lastOutflowCmd - hyst) {
+		lastOutflowCmd = outflowCmdRaw;
+	}
+	setprop("/systems/pressurization/outflowpos-norm-cmd-filt", lastOutflowCmd);
+			
+			setprop("/systems/pressurization/diff-to-target", targetalt - cabinalt); 
+			setprop("/systems/pressurization/deltap", cabinpsi - ambient); 
 
 		if ((pressmode == "GN") and (pressmode != "CL") and (wowl and wowr) and ((state1 == "MCT") or (state1 == "TOGA")) and ((state2 == "MCT") or (state2 == "TOGA"))) {
 			setprop("/systems/pressurization/mode", "TO");
