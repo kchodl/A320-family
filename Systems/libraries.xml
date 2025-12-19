@@ -329,11 +329,13 @@
 				</not>
 			</condition>
 			<expression>
-				<min>
-					<property>/systems/pressurization/targetalt-cmd</property>
+				<max>
 					<property>/FMGC/internal/ldg-elev</property>
-					<property>/instrumentation/altimeter/indicated-altitude-ft</property>
-				</min>
+					<min>
+						<property>/systems/pressurization/targetalt-cmd</property>
+						<property>/instrumentation/altimeter/indicated-altitude-ft</property>
+					</min>
+				</max>
 			</expression>
 		</input>
 		<output>/systems/pressurization/targetalt</output>
