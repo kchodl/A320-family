@@ -330,10 +330,8 @@
 			</condition>
 			<expression>
 				<min>
-					<min>
-						<property>/systems/pressurization/targetalt-cmd</property>
-						<property>/FMGC/internal/ldg-elev</property>
-					</min>
+					<property>/systems/pressurization/targetalt-cmd</property>
+					<property>/FMGC/internal/ldg-elev</property>
 					<property>/instrumentation/altimeter/indicated-altitude-ft</property>
 				</min>
 			</expression>
