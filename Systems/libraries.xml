@@ -323,12 +323,40 @@
 		</input>
 		<input>
 			<condition>
+				<and>
+					<not>
+						<property>/gear/gear[1]/wow</property>
+						<value>1</value>
+					</not>
+					<greater-than>
+						<property>/FMGC/internal/ldg-elev</property>
+						<value>0</value>
+					</greater-than>
+				</and>
+			</condition>
+			<expression>
+				<min>
+					<min>
+						<property>/systems/pressurization/targetalt-cmd</property>
+						<property>/FMGC/internal/ldg-elev</property>
+					</min>
+					<property>/instrumentation/altimeter/indicated-altitude-ft</property>
+				</min>
+			</expression>
+		</input>
+		<input>
+			<condition>
 				<not>
 					<property>/gear/gear[1]/wow</property>
 					<value>1</value>
 				</not>
 			</condition>
-			<property>/systems/pressurization/targetalt-cmd</property>
+			<expression>
+				<min>
+					<property>/systems/pressurization/targetalt-cmd</property>
+					<property>/instrumentation/altimeter/indicated-altitude-ft</property>
+				</min>
+			</expression>
 		</input>
 		<output>/systems/pressurization/targetalt</output>
 	</filter>
