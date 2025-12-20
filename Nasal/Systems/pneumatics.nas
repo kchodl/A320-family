@@ -21,6 +21,8 @@ var outflowpos = nil;
 var targetvs = nil; 
 var eng1_starter = nil;
 var eng2_starter = nil;
+var VS_MAX = 750;
+var last_press_elapsed = nil;
 
 # Main class
 var PNEU = {
@@ -205,27 +207,42 @@ var PNEU = {
 		if (targetvs == nil) targetvs = 0;
 		vs_cmd = getprop("/systems/pressurization/vs");
 		if (vs_cmd == nil) vs_cmd = targetvs;
+		var now = getprop("/sim/time/elapsed-sec");
 		var dt = getprop("/sim/time/delta-sec");
+		if (now != nil) {
+			if (!pause and last_press_elapsed != nil and now > last_press_elapsed) {
+				dt = now - last_press_elapsed;
+			}
+			if (pause) {
+				last_press_elapsed = now;
+			} else {
+				last_press_elapsed = now;
+			}
+		}
 		if (dt == nil) dt = 0.1;
-			var aircraft_alt = getprop("/instrumentation/altimeter/indicated-altitude-ft");
-			if (aircraft_alt == nil) aircraft_alt = cabinalt;
-			var aircraft_vs = getprop("/velocities/vertical-speed-fps");
-			if (aircraft_vs == nil) aircraft_vs = 0;
+		var aircraft_alt = getprop("/instrumentation/altimeter/indicated-altitude-ft");
+		if (aircraft_alt == nil) aircraft_alt = cabinalt;
+		var aircraft_vs = getprop("/velocities/vertical-speed-fps");
+		if (aircraft_vs == nil) aircraft_vs = 0;
 			aircraft_vs *= 60; # fpm
 			var landing_elev = getprop("/systems/pressurization/landing-elev");
 			if (landing_elev == nil) landing_elev = aircraft_alt;
-		var step = 0;
-		var newalt = cabinalt;
-		if (dt < 0.01) dt = 0.01;
-		if (dt > 0.2) dt = 0.2;
+			var step = 0;
+			var newalt = cabinalt;
+		if (pause) {
+			dt = 0;
+		} else {
+			if (dt < 0.01) dt = 0.01;
+			if (dt > 0.2) dt = 0.2;
+		}
 		if (ambient == nil) ambient = 0;
 		if (cabinpsi == nil) cabinpsi = ambient;
-		if (cabinalt == nil) {
-			cabinalt = aircraft_alt;
-			setprop("/systems/pressurization/cabinalt", cabinalt);
-		}
-		if (targetalt == nil) targetalt = cabinalt;
-		
+			if (cabinalt == nil) {
+				cabinalt = aircraft_alt;
+				setprop("/systems/pressurization/cabinalt", cabinalt);
+			}
+			if (targetalt == nil) targetalt = cabinalt;
+			
 			var targetalt_cmd = getprop("/systems/pressurization/targetalt-cmd");
 			if (targetalt_cmd == nil) targetalt_cmd = targetalt;
 			setprop("/systems/pressurization/diff-to-target", targetalt - cabinalt); 
@@ -250,32 +267,32 @@ var PNEU = {
 		
 		var diff = targetalt - cabinalt;
 		var commanded_vs = targetvs; # default to schedule
-		if (auto and !pause and !wowl and !wowr) {
-			var alt_above_ldg = aircraft_alt - landing_elev;
-			if (alt_above_ldg < 0) alt_above_ldg = 0;
-			var vs_floor = 750; # fpm for time metric
-			var vs_for_time = math.max(math.abs(aircraft_vs), vs_floor);
-			var t_go = alt_above_ldg / vs_for_time; # minutes (ft / fpm)
-			var VsMax = 1500; # fpm clamp
-			var t_need = math.abs(diff) / VsMax;
-			var t_min = math.max(dt / 60, 0.02); # minutes
-			t_go = math.max(t_go, t_min);
-			t_need = math.max(t_need, t_min);
-			var t_eff = math.sqrt(t_go * t_need);
+			if (auto and !pause and !wowl and !wowr) {
+				var alt_above_ldg = aircraft_alt - landing_elev;
+				if (alt_above_ldg < 0) alt_above_ldg = 0;
+				var vs_floor = 750; # fpm for time metric
+				var vs_for_time = math.max(math.abs(aircraft_vs), vs_floor);
+				var t_go = alt_above_ldg / vs_for_time; # minutes (ft / fpm)
+				var VsMax = VS_MAX; # fpm clamp
+				var t_need = math.abs(diff) / VsMax;
+				var t_min = math.max(dt / 60, 0.02); # minutes
+				t_go = math.max(t_go, t_min);
+				t_need = math.max(t_need, t_min);
+				var t_eff = math.sqrt(t_go * t_need);
 			var catchup_rate = 0;
 			if (math.abs(diff) > 25) {
 				catchup_rate = diff / t_eff;
 				if (catchup_rate > VsMax) catchup_rate = VsMax;
 				if (catchup_rate < -VsMax) catchup_rate = -VsMax;
+				}
+				commanded_vs = targetvs + catchup_rate;
+				if (commanded_vs > VS_MAX) commanded_vs = VS_MAX;
+				if (commanded_vs < -VS_MAX) commanded_vs = -VS_MAX;
+			} else if (!auto and !pause) {
+				commanded_vs = manvs;
+				if (commanded_vs > VS_MAX) commanded_vs = VS_MAX;
+				if (commanded_vs < -VS_MAX) commanded_vs = -VS_MAX;
 			}
-			commanded_vs = targetvs + catchup_rate;
-			if (commanded_vs > 1500) commanded_vs = 1500;
-			if (commanded_vs < -1500) commanded_vs = -1500;
-		} else if (!auto and !pause) {
-			commanded_vs = manvs;
-			if (commanded_vs > 1500) commanded_vs = 1500;
-			if (commanded_vs < -1500) commanded_vs = -1500;
-		}
 		
 		if (commanded_vs != vs_cmd and !wowl and !wowr) {
 			setprop("/systems/pressurization/vs", commanded_vs);
