@@ -226,9 +226,11 @@ var PNEU = {
 		}
 		if (targetalt == nil) targetalt = cabinalt;
 		
-		setprop("/systems/pressurization/diff-to-target", targetalt - cabinalt); 
-		setprop("/systems/pressurization/diff-to-targetalt", targetalt - cabinalt); 
-		setprop("/systems/pressurization/deltap", cabinpsi - ambient); 
+			var targetalt_cmd = getprop("/systems/pressurization/targetalt-cmd");
+			if (targetalt_cmd == nil) targetalt_cmd = targetalt;
+			setprop("/systems/pressurization/diff-to-target", targetalt - cabinalt); 
+			setprop("/systems/pressurization/diff-to-targetalt", targetalt_cmd - cabinalt); 
+			setprop("/systems/pressurization/deltap", cabinpsi - ambient); 
 	
 		if ((pressmode == "GN") and (pressmode != "CL") and (wowl and wowr) and ((state1 == "MCT") or (state1 == "TOGA")) and ((state2 == "MCT") or (state2 == "TOGA"))) {
 			setprop("/systems/pressurization/mode", "TO");
@@ -285,15 +287,17 @@ var PNEU = {
 					var vs_int = getprop("/systems/pressurization/vs-norm");
 					if (vs_int == nil) vs_int = vs_cmd;
 					step = vs_int * dt / 60;
-				newalt = cabinalt + step;
-				if ((cabinalt < targetalt and newalt > targetalt) or (cabinalt > targetalt and newalt < targetalt)) {
-					newalt = targetalt;
-				}
+					newalt = cabinalt + step;
+					if ((cabinalt < targetalt and newalt > targetalt) or (cabinalt > targetalt and newalt < targetalt)) {
+						newalt = targetalt;
+					}
 					if (newalt > aircraft_alt) newalt = aircraft_alt; # avoid negative delta-P near landing
 					setprop("/systems/pressurization/cabinalt", newalt);
 				}
 			} else if (!auto and !pause) {
-				step = manvs * dt / 60;
+				var vs_int_man = getprop("/systems/pressurization/vs-norm");
+				if (vs_int_man == nil) vs_int_man = vs_cmd;
+				step = vs_int_man * dt / 60;
 				newalt = cabinalt + step;
 				if (newalt > aircraft_alt) newalt = aircraft_alt; # avoid negative delta-P near landing
 				setprop("/systems/pressurization/cabinalt", newalt);
