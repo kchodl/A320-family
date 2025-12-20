@@ -328,7 +328,12 @@
 					<value>1</value>
 				</not>
 			</condition>
-			<property>/systems/pressurization/targetalt-cmd</property>
+			<expression>
+				<max>
+					<property>/systems/pressurization/targetalt-cmd</property>
+					<property>/systems/pressurization/landing-elev</property>
+				</max>
+			</expression>
 		</input>
 		<output>/systems/pressurization/targetalt</output>
 	</filter>
@@ -499,6 +504,22 @@
 		</input>
 		<output>/systems/pressurization/cabinalt-norm</output>
 		<max-rate-of-change>40500</max-rate-of-change>
+	</filter>
+
+	<filter>
+		<name>Pressurization Landing Elevation</name>
+		<type>gain</type>
+		<gain>1.0</gain>
+		<update-interval-secs>0.1</update-interval-secs>
+		<input>
+			<expression>
+				<max>
+					<property>/FMGC/internal/ldg-elev</property>
+					<property>/position/ground-elev-ft</property>
+				</max>
+			</expression>
+		</input>
+		<output>/systems/pressurization/landing-elev</output>
 	</filter>
 	
 	<filter>
