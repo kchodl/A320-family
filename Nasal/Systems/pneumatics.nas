@@ -212,11 +212,11 @@ var PNEU = {
 		}
 		
 		var diff = targetalt - cabinalt;
-		var commanded_vs = targetvs;
+		var commanded_vs = targetvs; # default to schedule
 		if (auto and !pause and !wowl and !wowr and math.abs(diff) > 200) {
-			var catchup_rate = math.abs(diff) / 6;
-			if (catchup_rate < 300) catchup_rate = 300;
-			if (catchup_rate > 750) catchup_rate = 750;
+			var catchup_rate = math.abs(diff) / 4; # ft/min
+			if (catchup_rate < 400) catchup_rate = 400;
+			if (catchup_rate > 1000) catchup_rate = 1000;
 			commanded_vs = math.sign(diff) * math.max(math.abs(targetvs), catchup_rate);
 		} else if (!auto and !pause) {
 			commanded_vs = manvs;
