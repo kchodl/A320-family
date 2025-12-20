@@ -189,17 +189,25 @@ var PNEU = {
 		state2 = systems.FADEC.detentText[1].getValue();
 		pressmode = getprop("/systems/pressurization/mode");
 		vs = getprop("/systems/pressurization/vs-norm");
+		if (vs == nil) vs = 0;
 		manvs = getprop("/systems/pressurization/manvs-cmd");
+		if (manvs == nil) manvs = 0;
 		pause = getprop("/sim/freeze/master");
 		auto = getprop("/systems/pressurization/auto");
 		speed = getprop("velocities/groundspeed-kt");
 		ditch = getprop("/systems/pressurization/ditchingpb");
 		outflowpos = getprop("/systems/pressurization/outflowpos");
 		targetvs = getprop("/systems/pressurization/targetvs");
-		var dt = getprop("/sim/time/delta-sec", 0.1);
-		var landing_elev = getprop("/systems/pressurization/landing-elev", 0);
-		var aircraft_alt = getprop("/instrumentation/altimeter/indicated-altitude-ft", cabinalt);
-		var aircraft_vs = getprop("/velocities/vertical-speed-fps", 0) * 60; # fpm
+		if (targetvs == nil) targetvs = 0;
+		var dt = getprop("/sim/time/delta-sec");
+		if (dt == nil) dt = 0.1;
+		var landing_elev = getprop("/systems/pressurization/landing-elev");
+		if (landing_elev == nil) landing_elev = 0;
+		var aircraft_alt = getprop("/instrumentation/altimeter/indicated-altitude-ft");
+		if (aircraft_alt == nil) aircraft_alt = cabinalt;
+		var aircraft_vs = getprop("/velocities/vertical-speed-fps");
+		if (aircraft_vs == nil) aircraft_vs = 0;
+		aircraft_vs *= 60; # fpm
 		var step = 0;
 		var newalt = cabinalt;
 		if (dt < 0.01) dt = 0.01;
@@ -220,10 +228,7 @@ var PNEU = {
 			var alt_above_ldg = aircraft_alt - landing_elev;
 			if (alt_above_ldg < 0) alt_above_ldg = 0;
 			var vs_for_time = math.max(math.abs(aircraft_vs), 50); # avoid divide-by-zero
-			var time_to_ldg = 0;
-			if (vs_for_time > 0) {
-				time_to_ldg = alt_above_ldg / vs_for_time; # minutes cancel to give minutes? alt(ft)/fpm = minutes
-			}
+			var time_to_ldg = alt_above_ldg / vs_for_time; # minutes? (ft / fpm)
 			if (time_to_ldg < 0.01) time_to_ldg = 0.01; # protect
 			var catchup_rate = diff / time_to_ldg; # ft/min target to close by landing
 			if (catchup_rate > 1500) catchup_rate = 1500;
