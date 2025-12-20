@@ -267,8 +267,12 @@ var PNEU = {
 				if (catchup_rate < -VsMax) catchup_rate = -VsMax;
 			}
 			commanded_vs = targetvs + catchup_rate;
+			if (commanded_vs > 1500) commanded_vs = 1500;
+			if (commanded_vs < -1500) commanded_vs = -1500;
 		} else if (!auto and !pause) {
 			commanded_vs = manvs;
+			if (commanded_vs > 1500) commanded_vs = 1500;
+			if (commanded_vs < -1500) commanded_vs = -1500;
 		}
 		
 		if (commanded_vs != vs_cmd and !wowl and !wowr) {
@@ -276,22 +280,24 @@ var PNEU = {
 			vs_cmd = commanded_vs;
 		}
 		
-		if (auto and !pause and !wowl and !wowr) {
-			if (math.abs(diff) > 0.5) {
-				var vs_int = getprop("/systems/pressurization/vs-norm");
-				if (vs_int == nil) vs_int = vs_cmd;
-				step = vs_int * dt / 60;
+			if (auto and !pause and !wowl and !wowr) {
+				if (math.abs(diff) > 0.5) {
+					var vs_int = getprop("/systems/pressurization/vs-norm");
+					if (vs_int == nil) vs_int = vs_cmd;
+					step = vs_int * dt / 60;
 				newalt = cabinalt + step;
 				if ((cabinalt < targetalt and newalt > targetalt) or (cabinalt > targetalt and newalt < targetalt)) {
 					newalt = targetalt;
 				}
+					if (newalt > aircraft_alt) newalt = aircraft_alt; # avoid negative delta-P near landing
+					setprop("/systems/pressurization/cabinalt", newalt);
+				}
+			} else if (!auto and !pause) {
+				step = manvs * dt / 60;
+				newalt = cabinalt + step;
 				if (newalt > aircraft_alt) newalt = aircraft_alt; # avoid negative delta-P near landing
 				setprop("/systems/pressurization/cabinalt", newalt);
 			}
-		} else if (!auto and !pause) {
-			step = manvs * dt / 60;
-			setprop("/systems/pressurization/cabinalt", cabinalt + step);
-		}
 		
 		#if (ditch and auto) {
 			#setprop("/systems/pressurization/outflowpos", "1");
