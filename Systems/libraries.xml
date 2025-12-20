@@ -519,7 +519,7 @@
 				</max>
 			</expression>
 		</input>
-		<output>/systems/pressurization/landing-elev</output>
+		<output>/systems/pressurization/landing-elev-raw</output>
 	</filter>
 	
 	<filter>
