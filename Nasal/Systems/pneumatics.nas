@@ -144,6 +144,7 @@ var PNEU = {
 		setprop("/systems/pressurization/ambientpsi", "0");
 		setprop("/systems/pressurization/cabinpsi", "0");
 		setprop("/systems/pressurization/manvs-cmd", "0");
+		setprop("/systems/pressurization/landing-elev", 0);
 		setprop("/systems/pressurization/pack-1-out-temp", 0);
 		setprop("/systems/pressurization/pack-2-out-temp", 0);
 		setprop("/systems/pressurization/pack-1-bypass", 0);
