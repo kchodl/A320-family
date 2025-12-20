@@ -197,6 +197,9 @@ var PNEU = {
 		outflowpos = getprop("/systems/pressurization/outflowpos");
 		targetvs = getprop("/systems/pressurization/targetvs");
 		var dt = getprop("/sim/time/delta-sec", 0.1);
+		var landing_elev = getprop("/systems/pressurization/landing-elev", 0);
+		var aircraft_alt = getprop("/instrumentation/altimeter/indicated-altitude-ft", cabinalt);
+		var aircraft_vs = getprop("/velocities/vertical-speed-fps", 0) * 60; # fpm
 		var step = 0;
 		var newalt = cabinalt;
 		if (dt < 0.01) dt = 0.01;
@@ -213,11 +216,19 @@ var PNEU = {
 		
 		var diff = targetalt - cabinalt;
 		var commanded_vs = targetvs; # default to schedule
-		if (auto and !pause and !wowl and !wowr and math.abs(diff) > 200) {
-			var catchup_rate = math.abs(diff) / 4; # ft/min
-			if (catchup_rate < 400) catchup_rate = 400;
-			if (catchup_rate > 1000) catchup_rate = 1000;
-			commanded_vs = math.sign(diff) * math.max(math.abs(targetvs), catchup_rate);
+		if (auto and !pause and !wowl and !wowr) {
+			var alt_above_ldg = aircraft_alt - landing_elev;
+			if (alt_above_ldg < 0) alt_above_ldg = 0;
+			var vs_for_time = math.max(math.abs(aircraft_vs), 50); # avoid divide-by-zero
+			var time_to_ldg = 0;
+			if (vs_for_time > 0) {
+				time_to_ldg = alt_above_ldg / vs_for_time; # minutes cancel to give minutes? alt(ft)/fpm = minutes
+			}
+			if (time_to_ldg < 0.01) time_to_ldg = 0.01; # protect
+			var catchup_rate = diff / time_to_ldg; # ft/min target to close by landing
+			if (catchup_rate > 1500) catchup_rate = 1500;
+			if (catchup_rate < -1500) catchup_rate = -1500;
+			commanded_vs = targetvs + catchup_rate;
 		} else if (!auto and !pause) {
 			commanded_vs = manvs;
 		}
