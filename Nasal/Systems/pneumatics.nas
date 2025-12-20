@@ -196,6 +196,11 @@ var PNEU = {
 		ditch = getprop("/systems/pressurization/ditchingpb");
 		outflowpos = getprop("/systems/pressurization/outflowpos");
 		targetvs = getprop("/systems/pressurization/targetvs");
+		var dt = getprop("/sim/time/delta-sec", 0.1);
+		var step = 0;
+		var newalt = cabinalt;
+		if (dt < 0.01) dt = 0.01;
+		if (dt > 0.2) dt = 0.2;
 		
 		setprop("/systems/pressurization/diff-to-target", targetalt - cabinalt); 
 		setprop("/systems/pressurization/deltap", cabinpsi - ambient); 
@@ -210,10 +215,18 @@ var PNEU = {
 			setprop("/systems/pressurization/vs", targetvs);
 		}
 		
-		if (cabinalt != targetalt and !wowl and !wowr and !pause and auto) {
-			setprop("/systems/pressurization/cabinalt", cabinalt + ((vs / 60) / 10));
+		if (auto and !pause and !wowl and !wowr) {
+			if (math.abs(targetalt - cabinalt) > 0.5) {
+				step = vs * dt / 60;
+				newalt = cabinalt + step;
+				if ((cabinalt < targetalt and newalt > targetalt) or (cabinalt > targetalt and newalt < targetalt)) {
+					newalt = targetalt;
+				}
+				setprop("/systems/pressurization/cabinalt", newalt);
+			}
 		} else if (!auto and !pause) {
-			setprop("/systems/pressurization/cabinalt", cabinalt + ((manvs / 60) / 10));
+			step = manvs * dt / 60;
+			setprop("/systems/pressurization/cabinalt", cabinalt + step);
 		}
 		
 		#if (ditch and auto) {
