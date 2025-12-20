@@ -207,13 +207,13 @@ var PNEU = {
 		if (vs_cmd == nil) vs_cmd = targetvs;
 		var dt = getprop("/sim/time/delta-sec");
 		if (dt == nil) dt = 0.1;
-		var aircraft_alt = getprop("/instrumentation/altimeter/indicated-altitude-ft");
-		if (aircraft_alt == nil) aircraft_alt = cabinalt;
-		var aircraft_vs = getprop("/velocities/vertical-speed-fps");
-		if (aircraft_vs == nil) aircraft_vs = 0;
-		aircraft_vs *= 60; # fpm
-		var landing_elev = getprop("/systems/pressurization/landing-elev");
-		if (landing_elev == nil) landing_elev = aircraft_alt;
+			var aircraft_alt = getprop("/instrumentation/altimeter/indicated-altitude-ft");
+			if (aircraft_alt == nil) aircraft_alt = cabinalt;
+			var aircraft_vs = getprop("/velocities/vertical-speed-fps");
+			if (aircraft_vs == nil) aircraft_vs = 0;
+			aircraft_vs *= 60; # fpm
+			var landing_elev = getprop("/systems/pressurization/landing-elev");
+			if (landing_elev == nil) landing_elev = aircraft_alt;
 		var step = 0;
 		var newalt = cabinalt;
 		if (dt < 0.01) dt = 0.01;
@@ -227,6 +227,7 @@ var PNEU = {
 		if (targetalt == nil) targetalt = cabinalt;
 		
 		setprop("/systems/pressurization/diff-to-target", targetalt - cabinalt); 
+		setprop("/systems/pressurization/diff-to-targetalt", targetalt - cabinalt); 
 		setprop("/systems/pressurization/deltap", cabinpsi - ambient); 
 	
 		if ((pressmode == "GN") and (pressmode != "CL") and (wowl and wowr) and ((state1 == "MCT") or (state1 == "TOGA")) and ((state2 == "MCT") or (state2 == "TOGA"))) {
@@ -235,27 +236,36 @@ var PNEU = {
 			setprop("/systems/pressurization/mode", "CL");	
 		}
 		
+		# latch landing elevation: on ground track current altitude, in air prefer FMGC value if sane
+		var ldg_prop = getprop("/FMGC/internal/ldg-elev");
+		if (wowl and wowr) {
+			landing_elev = aircraft_alt;
+			setprop("/systems/pressurization/landing-elev", landing_elev);
+		} else if (ldg_prop != nil and ldg_prop > -1500 and ldg_prop < 20000) {
+			landing_elev = ldg_prop;
+			setprop("/systems/pressurization/landing-elev", landing_elev);
+		}
+		
 		var diff = targetalt - cabinalt;
 		var commanded_vs = targetvs; # default to schedule
 		if (auto and !pause and !wowl and !wowr) {
-			# latch landing elevation: on ground track current altitude, in air prefer FMGC value if sane
-			var ldg_prop = getprop("/FMGC/internal/ldg-elev");
-			if (wowl and wowr) {
-				landing_elev = aircraft_alt;
-				setprop("/systems/pressurization/landing-elev", landing_elev);
-			} else if (ldg_prop != nil and ldg_prop > -1500 and ldg_prop < 20000) {
-				landing_elev = ldg_prop;
-				setprop("/systems/pressurization/landing-elev", landing_elev);
-			}
-			
 			var alt_above_ldg = aircraft_alt - landing_elev;
 			if (alt_above_ldg < 0) alt_above_ldg = 0;
-			var vs_for_time = math.max(math.abs(aircraft_vs), 50); # avoid divide-by-zero
-			var time_to_ldg = alt_above_ldg / vs_for_time; # minutes? (ft / fpm)
-			if (time_to_ldg < 0.01) time_to_ldg = 0.01; # protect
-			var catchup_rate = diff / time_to_ldg; # ft/min target to close by landing
-			if (catchup_rate > 1500) catchup_rate = 1500;
-			if (catchup_rate < -1500) catchup_rate = -1500;
+			var vs_floor = 750; # fpm for time metric
+			var vs_for_time = math.max(math.abs(aircraft_vs), vs_floor);
+			var t_go = alt_above_ldg / vs_for_time; # minutes (ft / fpm)
+			var VsMax = 1500; # fpm clamp
+			var t_need = math.abs(diff) / VsMax;
+			var t_min = math.max(dt / 60, 0.02); # minutes
+			t_go = math.max(t_go, t_min);
+			t_need = math.max(t_need, t_min);
+			var t_eff = math.sqrt(t_go * t_need);
+			var catchup_rate = 0;
+			if (math.abs(diff) > 25) {
+				catchup_rate = diff / t_eff;
+				if (catchup_rate > VsMax) catchup_rate = VsMax;
+				if (catchup_rate < -VsMax) catchup_rate = -VsMax;
+			}
 			commanded_vs = targetvs + catchup_rate;
 		} else if (!auto and !pause) {
 			commanded_vs = manvs;
