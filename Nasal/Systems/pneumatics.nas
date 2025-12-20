@@ -204,19 +204,31 @@ var PNEU = {
 		
 		setprop("/systems/pressurization/diff-to-target", targetalt - cabinalt); 
 		setprop("/systems/pressurization/deltap", cabinpsi - ambient); 
-
+	
 		if ((pressmode == "GN") and (pressmode != "CL") and (wowl and wowr) and ((state1 == "MCT") or (state1 == "TOGA")) and ((state2 == "MCT") or (state2 == "TOGA"))) {
 			setprop("/systems/pressurization/mode", "TO");
 		} else if (((!wowl) or (!wowr)) and (speed > 100) and (pressmode == "TO")) {
 			setprop("/systems/pressurization/mode", "CL");	
 		}
 		
-		if (vs != targetvs and !wowl and !wowr) {
-			setprop("/systems/pressurization/vs", targetvs);
+		var diff = targetalt - cabinalt;
+		var commanded_vs = targetvs;
+		if (auto and !pause and !wowl and !wowr and math.abs(diff) > 200) {
+			var catchup_rate = math.abs(diff) / 6;
+			if (catchup_rate < 300) catchup_rate = 300;
+			if (catchup_rate > 750) catchup_rate = 750;
+			commanded_vs = math.sign(diff) * math.max(math.abs(targetvs), catchup_rate);
+		} else if (!auto and !pause) {
+			commanded_vs = manvs;
+		}
+		
+		if (commanded_vs != vs and !wowl and !wowr) {
+			setprop("/systems/pressurization/vs", commanded_vs);
+			vs = commanded_vs;
 		}
 		
 		if (auto and !pause and !wowl and !wowr) {
-			if (math.abs(targetalt - cabinalt) > 0.5) {
+			if (math.abs(diff) > 0.5) {
 				step = vs * dt / 60;
 				newalt = cabinalt + step;
 				if ((cabinalt < targetalt and newalt > targetalt) or (cabinalt > targetalt and newalt < targetalt)) {
