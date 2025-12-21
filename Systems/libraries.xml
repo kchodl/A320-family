@@ -529,16 +529,18 @@
 		<update-interval-secs>0.05</update-interval-secs>
 		<input>
 			<expression>
-				<table>
-					<property>/it-autoflight/internal/vert-speed-fpm</property>
-					<entry><ind>-50000</ind><dep> -750</dep></entry>
-					<entry><ind> -2000</ind><dep> -750</dep></entry>
-					<entry><ind> -1000</ind><dep> -350</dep></entry>
-					<entry><ind>     0</ind><dep>    0</dep></entry>
-					<entry><ind>  1000</ind><dep>  250</dep></entry>
-					<entry><ind>  2000</ind><dep>  450</dep></entry>
-					<entry><ind>  3000</ind><dep>  600</dep></entry>
-					<entry><ind>  4000</ind><dep>  750</dep></entry>
+					<table>
+						<property>/it-autoflight/internal/vert-speed-fpm</property>
+						<entry><ind>-50000</ind><dep> -750</dep></entry>
+						<entry><ind> -4000</ind><dep> -750</dep></entry>
+						<entry><ind> -3000</ind><dep> -600</dep></entry>
+						<entry><ind> -2000</ind><dep> -500</dep></entry>
+						<entry><ind> -1000</ind><dep> -250</dep></entry>
+						<entry><ind>     0</ind><dep>    0</dep></entry>
+						<entry><ind>  1000</ind><dep>  250</dep></entry>
+						<entry><ind>  2000</ind><dep>  450</dep></entry>
+						<entry><ind>  3000</ind><dep>  600</dep></entry>
+						<entry><ind>  4000</ind><dep>  750</dep></entry>
 					<entry><ind>  5000</ind><dep>  750</dep></entry>
 					<entry><ind> 10000</ind><dep>  750</dep></entry>
 					<entry><ind> 50000</ind><dep>  750</dep></entry>
