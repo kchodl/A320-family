@@ -205,20 +205,16 @@ var PNEU = {
 		outflowpos = getprop("/systems/pressurization/outflowpos");
 		targetvs = getprop("/systems/pressurization/targetvs");
 		if (targetvs == nil) targetvs = 0;
-		vs_cmd = getprop("/systems/pressurization/vs");
-		if (vs_cmd == nil) vs_cmd = targetvs;
-		var now = getprop("/sim/time/elapsed-sec");
-		var dt = getprop("/sim/time/delta-sec");
-		if (now != nil) {
-			if (!pause and last_press_elapsed != nil and now > last_press_elapsed) {
-				dt = now - last_press_elapsed;
-			}
-			if (pause) {
-				last_press_elapsed = now;
-			} else {
+			vs_cmd = getprop("/systems/pressurization/vs");
+			if (vs_cmd == nil) vs_cmd = targetvs;
+			var now = getprop("/sim/time/elapsed-sec");
+			var dt = getprop("/sim/time/delta-sec");
+			if (now != nil) {
+				if (!pause and last_press_elapsed != nil and now > last_press_elapsed) {
+					dt = now - last_press_elapsed;
+				}
 				last_press_elapsed = now;
 			}
-		}
 		if (dt == nil) dt = 0.1;
 		var aircraft_alt = getprop("/instrumentation/altimeter/indicated-altitude-ft");
 		if (aircraft_alt == nil) aircraft_alt = cabinalt;
