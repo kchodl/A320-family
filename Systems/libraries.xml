@@ -299,7 +299,7 @@
 					<entry><ind> 5000</ind><dep>1100</dep></entry>
 					<entry><ind>20000</ind><dep>5200</dep></entry>
 					<entry><ind>30000</ind><dep>6700</dep></entry>
-					<entry><ind>30000</ind><dep>7900</dep></entry>
+						<entry><ind>35000</ind><dep>7900</dep></entry>
 					<entry><ind>40500</ind><dep>8000</dep></entry>
 				</table>
 			</expression>

@@ -184,6 +184,7 @@ var PNEU = {
 	loop: func(notification) {
 		wowl = notification.gear1Wow;
 		wowr = notification.gear2Wow;
+		var on_ground = (wowl or wowr);
 		
 		# Legacy pressurization
 		cabinalt = getprop("/systems/pressurization/cabinalt");
@@ -201,49 +202,54 @@ var PNEU = {
 		auto = getprop("/systems/pressurization/auto");
 		speed = getprop("/velocities/groundspeed-kt");
 		if (speed == nil) speed = 0;
-			ditch = getprop("/systems/pressurization/ditchingpb");
-			outflowpos = getprop("/systems/pressurization/outflowpos");
-			targetvs = getprop("/systems/pressurization/targetvs");
-			if (targetvs == nil) targetvs = 0;
-			vs_cmd = getprop("/systems/pressurization/vs");
-			if (vs_cmd == nil) vs_cmd = targetvs;
-			var now = getprop("/sim/time/elapsed-sec");
-			var dt = getprop("/sim/time/delta-sec");
-			if (now != nil) {
-				if (!pause and last_press_elapsed != nil and now > last_press_elapsed) {
-					dt = now - last_press_elapsed;
-				}
-				last_press_elapsed = now;
+		ditch = getprop("/systems/pressurization/ditchingpb");
+		outflowpos = getprop("/systems/pressurization/outflowpos");
+		targetvs = getprop("/systems/pressurization/targetvs");
+		if (targetvs == nil) targetvs = 0;
+		vs_cmd = getprop("/systems/pressurization/vs");
+		if (vs_cmd == nil) vs_cmd = targetvs;
+		var now = getprop("/sim/time/elapsed-sec");
+		var dt = getprop("/sim/time/delta-sec");
+		if (now != nil) {
+			if (!pause and last_press_elapsed != nil and now > last_press_elapsed) {
+				dt = now - last_press_elapsed;
 			}
+			last_press_elapsed = now;
+		}
 		if (dt == nil) dt = 0.1;
 		var aircraft_alt = getprop("/instrumentation/altimeter/indicated-altitude-ft");
 		if (aircraft_alt == nil) aircraft_alt = cabinalt;
 		var aircraft_vs = getprop("/velocities/vertical-speed-fps");
 		if (aircraft_vs == nil) aircraft_vs = 0;
-			aircraft_vs *= 60; # fpm
-			var landing_elev = getprop("/systems/pressurization/landing-elev");
-			if (landing_elev == nil) landing_elev = aircraft_alt;
-			var step = 0;
-			var newalt = cabinalt;
+		aircraft_vs *= 60; # fpm
+		var landing_elev = getprop("/systems/pressurization/landing-elev");
+		if (landing_elev == nil) landing_elev = aircraft_alt;
+		var step = 0;
+		var newalt = cabinalt;
 		if (pause) {
 			dt = 0;
 		} else {
 			if (dt < 0.01) dt = 0.01;
-			if (dt > 0.2) dt = 0.2;
+			if (dt > 0.3) dt = 0.3;
 		}
+		setprop("/systems/pressurization/dt-used", dt);
 		if (ambient == nil) ambient = 0;
 		if (cabinpsi == nil) cabinpsi = ambient;
-			if (cabinalt == nil) {
-				cabinalt = aircraft_alt;
-				setprop("/systems/pressurization/cabinalt", cabinalt);
-			}
-			if (targetalt == nil) targetalt = cabinalt;
-			
-			var targetalt_cmd = getprop("/systems/pressurization/targetalt-cmd");
-			if (targetalt_cmd == nil) targetalt_cmd = targetalt;
-			setprop("/systems/pressurization/diff-to-target", targetalt - cabinalt); 
-			setprop("/systems/pressurization/diff-to-targetalt", targetalt_cmd - cabinalt); 
-			setprop("/systems/pressurization/deltap", cabinpsi - ambient); 
+		if (cabinalt == nil) {
+			cabinalt = aircraft_alt;
+			setprop("/systems/pressurization/cabinalt", cabinalt);
+		}
+		if (on_ground and (cabinalt == nil or math.abs(cabinalt - aircraft_alt) > 50)) {
+			cabinalt = aircraft_alt;
+			setprop("/systems/pressurization/cabinalt", cabinalt);
+		}
+		if (targetalt == nil) targetalt = cabinalt;
+		
+		var targetalt_cmd = getprop("/systems/pressurization/targetalt-cmd");
+		if (targetalt_cmd == nil) targetalt_cmd = targetalt;
+		setprop("/systems/pressurization/diff-to-target", targetalt - cabinalt); 
+		setprop("/systems/pressurization/diff-to-targetalt", targetalt_cmd - cabinalt); 
+		setprop("/systems/pressurization/deltap", cabinpsi - ambient); 
 	
 		if ((pressmode == "GN") and (pressmode != "CL") and (wowl and wowr) and ((state1 == "MCT") or (state1 == "TOGA")) and ((state2 == "MCT") or (state2 == "TOGA"))) {
 			setprop("/systems/pressurization/mode", "TO");
@@ -253,68 +259,68 @@ var PNEU = {
 		
 		# latch landing elevation: on ground track current altitude, in air prefer FMGC value if sane
 		var ldg_prop = getprop("/FMGC/internal/ldg-elev");
-		if (wowl and wowr) {
+		if (on_ground) {
 			landing_elev = aircraft_alt;
 			setprop("/systems/pressurization/landing-elev", landing_elev);
-		} else if (ldg_prop != nil and ldg_prop > -1500 and ldg_prop < 20000) {
+		} else if (ldg_prop != nil and ldg_prop != 0 and ldg_prop > -1500 and ldg_prop < 20000) {
 			landing_elev = ldg_prop;
 			setprop("/systems/pressurization/landing-elev", landing_elev);
 		}
 		
 		var diff = targetalt - cabinalt;
 		var commanded_vs = targetvs; # default to schedule
-			if (auto and !pause and !wowl and !wowr) {
-				var alt_above_ldg = aircraft_alt - landing_elev;
-				if (alt_above_ldg < 0) alt_above_ldg = 0;
-				var vs_floor = 750; # fpm for time metric
-				var vs_for_time = math.max(math.abs(aircraft_vs), vs_floor);
-				var t_go = alt_above_ldg / vs_for_time; # minutes (ft / fpm)
-				var VsMax = VS_MAX; # fpm clamp
-				var t_need = math.abs(diff) / VsMax;
-				var t_min = math.max(dt / 60, 0.02); # minutes
-				t_go = math.max(t_go, t_min);
-				t_need = math.max(t_need, t_min);
-				var t_eff = math.sqrt(t_go * t_need);
+		if (auto and !pause and !wowl and !wowr) {
+			var alt_above_ldg = aircraft_alt - landing_elev;
+			if (alt_above_ldg < 0) alt_above_ldg = 0;
+			var vs_floor = 750; # fpm for time metric
+			var vs_for_time = math.max(math.abs(aircraft_vs), vs_floor);
+			var t_go = alt_above_ldg / vs_for_time; # minutes (ft / fpm)
+			var VsMax = VS_MAX; # fpm clamp
+			var t_need = math.abs(diff) / VsMax;
+			var t_min = math.max(dt / 60, 0.02); # minutes
+			t_go = math.max(t_go, t_min);
+			t_need = math.max(t_need, t_min);
+			var t_eff = math.sqrt(t_go * t_need);
 			var catchup_rate = 0;
 			if (math.abs(diff) > 25) {
 				catchup_rate = diff / t_eff;
 				if (catchup_rate > VsMax) catchup_rate = VsMax;
 				if (catchup_rate < -VsMax) catchup_rate = -VsMax;
-				}
-				commanded_vs = targetvs + catchup_rate;
-				if (commanded_vs > VS_MAX) commanded_vs = VS_MAX;
-				if (commanded_vs < -VS_MAX) commanded_vs = -VS_MAX;
-			} else if (!auto and !pause) {
-				commanded_vs = manvs;
-				if (commanded_vs > VS_MAX) commanded_vs = VS_MAX;
-				if (commanded_vs < -VS_MAX) commanded_vs = -VS_MAX;
 			}
-		
+			commanded_vs = targetvs + catchup_rate;
+			if (commanded_vs > VS_MAX) commanded_vs = VS_MAX;
+			if (commanded_vs < -VS_MAX) commanded_vs = -VS_MAX;
+		} else if (!auto and !pause) {
+			commanded_vs = manvs;
+			if (commanded_vs > VS_MAX) commanded_vs = VS_MAX;
+			if (commanded_vs < -VS_MAX) commanded_vs = -VS_MAX;
+		}
+
 		if (commanded_vs != vs_cmd and !wowl and !wowr) {
 			setprop("/systems/pressurization/vs", commanded_vs);
 			vs_cmd = commanded_vs;
 		}
 		
-			if (auto and !pause and !wowl and !wowr) {
-				if (math.abs(diff) > 0.5) {
-					var vs_int = getprop("/systems/pressurization/vs-norm");
-					if (vs_int == nil) vs_int = vs_cmd;
-					step = vs_int * dt / 60;
-					newalt = cabinalt + step;
-					if ((cabinalt < targetalt and newalt > targetalt) or (cabinalt > targetalt and newalt < targetalt)) {
-						newalt = targetalt;
-					}
-					if (newalt > aircraft_alt) newalt = aircraft_alt; # avoid negative delta-P near landing
-					setprop("/systems/pressurization/cabinalt", newalt);
-				}
-			} else if (!auto and !pause) {
-				var vs_int_man = getprop("/systems/pressurization/vs-norm");
-				if (vs_int_man == nil) vs_int_man = vs_cmd;
-				step = vs_int_man * dt / 60;
+		if (auto and !pause and !wowl and !wowr) {
+			if (math.abs(diff) > 0.5) {
+				var vs_int = getprop("/systems/pressurization/vs-norm");
+				if (vs_int == nil) vs_int = vs_cmd;
+				step = vs_int * dt / 60;
 				newalt = cabinalt + step;
+				if ((cabinalt < targetalt and newalt > targetalt) or (cabinalt > targetalt and newalt < targetalt)) {
+					newalt = targetalt;
+				}
 				if (newalt > aircraft_alt) newalt = aircraft_alt; # avoid negative delta-P near landing
 				setprop("/systems/pressurization/cabinalt", newalt);
 			}
+		} else if (!auto and !pause) {
+			var vs_int_man = getprop("/systems/pressurization/vs-norm");
+			if (vs_int_man == nil) vs_int_man = vs_cmd;
+			step = vs_int_man * dt / 60;
+			newalt = cabinalt + step;
+			if (newalt > aircraft_alt) newalt = aircraft_alt; # avoid negative delta-P near landing
+			setprop("/systems/pressurization/cabinalt", newalt);
+		}
 		
 		#if (ditch and auto) {
 			#setprop("/systems/pressurization/outflowpos", "1");
