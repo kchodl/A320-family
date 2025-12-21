@@ -203,8 +203,8 @@ var PNEU = {
 		if (speed == nil) speed = 0;
 		ditch = getprop("/systems/pressurization/ditchingpb");
 		outflowpos = getprop("/systems/pressurization/outflowpos");
-		targetvs = getprop("/systems/pressurization/targetvs");
-		if (targetvs == nil) targetvs = 0;
+			targetvs = getprop("/systems/pressurization/targetvs");
+			if (targetvs == nil) targetvs = 0;
 			vs_cmd = getprop("/systems/pressurization/vs");
 			if (vs_cmd == nil) vs_cmd = targetvs;
 			var now = getprop("/sim/time/elapsed-sec");
