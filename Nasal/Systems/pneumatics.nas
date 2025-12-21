@@ -201,8 +201,8 @@ var PNEU = {
 		auto = getprop("/systems/pressurization/auto");
 		speed = getprop("/velocities/groundspeed-kt");
 		if (speed == nil) speed = 0;
-		ditch = getprop("/systems/pressurization/ditchingpb");
-		outflowpos = getprop("/systems/pressurization/outflowpos");
+			ditch = getprop("/systems/pressurization/ditchingpb");
+			outflowpos = getprop("/systems/pressurization/outflowpos");
 			targetvs = getprop("/systems/pressurization/targetvs");
 			if (targetvs == nil) targetvs = 0;
 			vs_cmd = getprop("/systems/pressurization/vs");
