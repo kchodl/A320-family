@@ -200,6 +200,7 @@ var PNEU = {
 		if (manvs == nil) manvs = 0;
 		pause = getprop("/sim/freeze/master");
 		auto = getprop("/systems/pressurization/auto");
+		if (auto == nil) auto = 1;
 		speed = getprop("/velocities/groundspeed-kt");
 		if (speed == nil) speed = 0;
 		ditch = getprop("/systems/pressurization/ditchingpb");
@@ -219,6 +220,7 @@ var PNEU = {
 		if (dt == nil) dt = 0.1;
 		var aircraft_alt = getprop("/instrumentation/altimeter/indicated-altitude-ft");
 		if (aircraft_alt == nil) aircraft_alt = cabinalt;
+		if (aircraft_alt == nil) aircraft_alt = 0;
 		var aircraft_vs = getprop("/velocities/vertical-speed-fps");
 		if (aircraft_vs == nil) aircraft_vs = 0;
 		aircraft_vs *= 60; # fpm
