@@ -281,6 +281,7 @@ var PNEU = {
 		if (p_static != nil) ambient_calc = p_static * 0.491154;
 		ambient = ambient_calc;
 		if (ambient == nil) ambient = ambient_prev;
+		if (ambient == nil) ambient = 14.7;
 		setprop("/systems/pressurization/ambientpsi", ambient);
 		if (cabinpsi == nil) cabinpsi = ambient;
 		if (cabinalt == nil) {
