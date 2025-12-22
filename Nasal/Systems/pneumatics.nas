@@ -143,8 +143,8 @@ var PNEU = {
 		setprop("/systems/pressurization/diff-to-target", "0");
 		setprop("/systems/pressurization/ditchingpb", 0);
 		setprop("/systems/pressurization/targetvs", "0");
-		setprop("/systems/pressurization/ambientpsi", "0");
-		setprop("/systems/pressurization/cabinpsi", "0");
+			setprop("/systems/pressurization/ambientpsi", 14.7);
+			setprop("/systems/pressurization/cabinpsi", 14.7);
 		setprop("/systems/pressurization/manvs-cmd", "0");
 			var init_alt = pts.Instrumentation.Altimeter.indicatedFt.getValue();
 			if (init_alt == nil) init_alt = 0;
