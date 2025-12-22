@@ -319,7 +319,12 @@
 					<value>1</value>
 				</equals>
 			</condition>
-			<property>/systems/pressurization/cabinalt-norm</property>
+			<expression>
+				<min>
+					<property>/systems/pressurization/landing-elev</property>
+					<property>/instrumentation/altimeter/pressure-alt-ft</property>
+				</min>
+			</expression>
 		</input>
 		<input>
 			<condition>
@@ -329,10 +334,13 @@
 				</not>
 			</condition>
 			<expression>
-				<max>
-					<property>/systems/pressurization/targetalt-cmd</property>
-					<property>/systems/pressurization/landing-elev</property>
-				</max>
+				<min>
+					<property>/instrumentation/altimeter/pressure-alt-ft</property>
+					<max>
+						<property>/systems/pressurization/targetalt-cmd</property>
+						<property>/systems/pressurization/landing-elev</property>
+					</max>
+				</min>
 			</expression>
 		</input>
 		<output>/systems/pressurization/targetalt</output>
@@ -370,21 +378,6 @@
 		<gain>1.0</gain>
 		<update-interval-secs>0.1</update-interval-secs>
 		<input>
-			<condition>
-				<equals>
-					<property>/gear/gear[1]/wow</property>
-					<value>1</value>
-				</equals>
-			</condition>
-			<property>/systems/pressurization/ambientpsi</property>
-		</input>
-		<input>
-			<condition>
-				<not>
-					<property>/gear/gear[1]/wow</property>
-					<value>1</value>
-				</not>
-			</condition>
 			<property>/systems/pressurization/cabinpsi-target</property>
 		</input>
 		<output>/systems/pressurization/cabinpsi</output>
