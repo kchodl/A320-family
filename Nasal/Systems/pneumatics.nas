@@ -226,6 +226,9 @@ var PNEU = {
 		var gps_alt = getprop("/instrumentation/gps/indicated-altitude-ft");
 		var ground_elev = getprop("/position/ground-elev-ft");
 		var alt_ground = alt_ind;
+		var eq_targetalt = alt_press;
+		if (eq_targetalt == nil) eq_targetalt = alt_ind;
+		if (eq_targetalt == nil) eq_targetalt = 0;
 		var door_l1 = getprop("/sim/model/door-positions/doorl1/position-norm");
 		if (door_l1 == nil) door_l1 = 0;
 		var door_l4 = getprop("/sim/model/door-positions/doorl4/position-norm");
@@ -242,6 +245,10 @@ var PNEU = {
 		var press_avail = 0;
 		if (pack_factor != 0) press_avail = 1;
 		setprop("/systems/pressurization/press-avail", press_avail);
+		var eq_mode = 0;
+		if (on_ground and !pause) eq_mode = 1;
+		setprop("/systems/pressurization/eq-mode", eq_mode);
+		setprop("/systems/pressurization/eq-targetalt", eq_targetalt);
 		if (gps_alt != nil and gps_alt > -1500 and gps_alt < 20000) {
 			var use_gps = 1;
 			if (ground_elev != nil) {
@@ -306,7 +313,7 @@ var PNEU = {
 		
 		var diff = targetalt - cabinalt;
 		var commanded_vs = targetvs; # default to schedule
-		var active = (press_avail == 1) and (!pause);
+		var active = (!pause) and ((press_avail == 1) or on_ground);
 		if (auto and active) {
 			var alt_above_ldg = alt_ind - landing_elev;
 			if (alt_above_ldg < 0) alt_above_ldg = 0;
