@@ -315,21 +315,16 @@
 		<input>
 			<condition>
 				<equals>
-					<property>/gear/gear[1]/wow</property>
+					<property>/systems/pressurization/eq-mode</property>
 					<value>1</value>
 				</equals>
 			</condition>
-			<expression>
-				<min>
-					<property>/systems/pressurization/landing-elev</property>
-					<property>/instrumentation/altimeter/pressure-alt-ft</property>
-				</min>
-			</expression>
+			<property>/systems/pressurization/eq-targetalt</property>
 		</input>
 		<input>
 			<condition>
 				<not>
-					<property>/gear/gear[1]/wow</property>
+					<property>/systems/pressurization/eq-mode</property>
 					<value>1</value>
 				</not>
 			</condition>
