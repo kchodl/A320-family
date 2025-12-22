@@ -223,6 +223,19 @@ var PNEU = {
 		if (alt_ind == nil) alt_ind = 0;
 		var alt_press = getprop("/instrumentation/altimeter/pressure-alt-ft");
 		if (alt_press == nil) alt_press = alt_ind;
+		var gps_alt = getprop("/instrumentation/gps/indicated-altitude-ft");
+		var ground_elev = getprop("/position/ground-elev-ft");
+		var alt_ground = alt_ind;
+		if (gps_alt != nil and gps_alt > -1500 and gps_alt < 20000) {
+			var use_gps = 1;
+			if (ground_elev != nil) {
+				use_gps = 0;
+				if (math.abs(gps_alt - ground_elev) <= 300) {
+					use_gps = 1;
+				}
+			}
+			if (use_gps == 1) alt_ground = gps_alt;
+		}
 		var aircraft_vs = getprop("/velocities/vertical-speed-fps");
 		if (aircraft_vs == nil) aircraft_vs = 0;
 		aircraft_vs *= 60; # fpm
@@ -251,8 +264,8 @@ var PNEU = {
 			cabinalt = alt_ind;
 			setprop("/systems/pressurization/cabinalt", cabinalt);
 		}
-		if (on_ground and (cabinalt == nil or math.abs(cabinalt - alt_ind) > 50)) {
-			cabinalt = alt_ind;
+		if (on_ground and (cabinalt == nil or math.abs(cabinalt - alt_ground) > 50)) {
+			cabinalt = alt_ground;
 			setprop("/systems/pressurization/cabinalt", cabinalt);
 		}
 		if (targetalt == nil) targetalt = cabinalt;
@@ -272,7 +285,7 @@ var PNEU = {
 		# latch landing elevation: on ground track current altitude, in air prefer FMGC value if sane
 		var ldg_prop = getprop("/FMGC/internal/ldg-elev");
 		if (on_ground) {
-			landing_elev = alt_ind;
+			landing_elev = alt_ground;
 			setprop("/systems/pressurization/landing-elev", landing_elev);
 		} else if (ldg_prop != nil and ldg_prop != 0 and ldg_prop > -1500 and ldg_prop < 20000) {
 			landing_elev = ldg_prop;
