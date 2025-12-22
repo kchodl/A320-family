@@ -1073,7 +1073,9 @@ var messages_priority_3 = func {
 	}
 	
 	# CAB PRESS EXESS RESIDUAL PRESS
-		if (phaseVar3 == 10 and excessResidPress.clearFlag == 0 and warningNodes.Logic.excessPress.getValue() == 1) {
+	if (phaseVar3 == 10 and warningNodes.Logic.excessPress.getValue() == 1 and excessResidPress.clearFlag == 0) {
+		excessResidPress.active = 1;
+
 		if (excessResidPressPack1.clearFlag == 0) {
 			excessResidPressPack1.active = 1;
 		} else {
