@@ -293,7 +293,7 @@
 		<input>
 			<expression>
 					<table>
-						<property>/instrumentation/altimeter/indicated-altitude-ft</property>
+							<property>/instrumentation/altimeter/pressure-alt-ft</property>
 						<entry><ind>    0</ind><dep>   0</dep></entry>
 						<entry><ind> 1000</ind><dep> 500</dep></entry>
 						<entry><ind> 5000</ind><dep>1100</dep></entry>
