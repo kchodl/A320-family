@@ -226,6 +226,22 @@ var PNEU = {
 		var gps_alt = getprop("/instrumentation/gps/indicated-altitude-ft");
 		var ground_elev = getprop("/position/ground-elev-ft");
 		var alt_ground = alt_ind;
+		var door_l1 = getprop("/sim/model/door-positions/doorl1/position-norm");
+		if (door_l1 == nil) door_l1 = 0;
+		var door_l4 = getprop("/sim/model/door-positions/doorl4/position-norm");
+		if (door_l4 == nil) door_l4 = 0;
+		var door_r1 = getprop("/sim/model/door-positions/doorr1/position-norm");
+		if (door_r1 == nil) door_r1 = 0;
+		var door_r4 = getprop("/sim/model/door-positions/doorr4/position-norm");
+		if (door_r4 == nil) door_r4 = 0;
+		var doors_open = 0;
+		if (door_l1 > 0.001 or door_l4 > 0.001 or door_r1 > 0.001 or door_r4 > 0.001) doors_open = 1;
+		setprop("/systems/pressurization/doors-open", doors_open);
+		var pack_factor = getprop("/systems/air-conditioning/packs/pack-factor");
+		if (pack_factor == nil) pack_factor = 1;
+		var press_avail = 0;
+		if (pack_factor != 0) press_avail = 1;
+		setprop("/systems/pressurization/press-avail", press_avail);
 		if (gps_alt != nil and gps_alt > -1500 and gps_alt < 20000) {
 			var use_gps = 1;
 			if (ground_elev != nil) {
@@ -261,11 +277,7 @@ var PNEU = {
 		setprop("/systems/pressurization/ambientpsi", ambient);
 		if (cabinpsi == nil) cabinpsi = ambient;
 		if (cabinalt == nil) {
-			cabinalt = alt_ind;
-			setprop("/systems/pressurization/cabinalt", cabinalt);
-		}
-		if (on_ground and (cabinalt == nil or math.abs(cabinalt - alt_ground) > 50)) {
-			cabinalt = alt_ground;
+			cabinalt = alt_press;
 			setprop("/systems/pressurization/cabinalt", cabinalt);
 		}
 		if (targetalt == nil) targetalt = cabinalt;
@@ -294,7 +306,8 @@ var PNEU = {
 		
 		var diff = targetalt - cabinalt;
 		var commanded_vs = targetvs; # default to schedule
-		if (auto and !pause and !wowl and !wowr) {
+		var active = (press_avail == 1) and (!pause);
+		if (auto and active) {
 			var alt_above_ldg = alt_ind - landing_elev;
 			if (alt_above_ldg < 0) alt_above_ldg = 0;
 			var vs_floor = 750; # fpm for time metric
@@ -315,18 +328,19 @@ var PNEU = {
 			commanded_vs = targetvs + catchup_rate;
 			if (commanded_vs > VS_MAX) commanded_vs = VS_MAX;
 			if (commanded_vs < -VS_MAX) commanded_vs = -VS_MAX;
-		} else if (!auto and !pause) {
+		} else if (!auto and active) {
 			commanded_vs = manvs;
 			if (commanded_vs > VS_MAX) commanded_vs = VS_MAX;
 			if (commanded_vs < -VS_MAX) commanded_vs = -VS_MAX;
 		}
 
-		if (commanded_vs != vs_cmd and !wowl and !wowr) {
+		if (!active) commanded_vs = 0;
+		if (commanded_vs != vs_cmd) {
 			setprop("/systems/pressurization/vs", commanded_vs);
 			vs_cmd = commanded_vs;
 		}
 		
-		if (auto and !pause and !wowl and !wowr) {
+		if (auto and active) {
 			if (math.abs(diff) > 0.5) {
 				var vs_int = getprop("/systems/pressurization/vs-norm");
 				if (vs_int == nil) vs_int = vs_cmd;
@@ -338,7 +352,7 @@ var PNEU = {
 					if (newalt > alt_press) newalt = alt_press; # avoid negative delta-P near landing
 					setprop("/systems/pressurization/cabinalt", newalt);
 				}
-			} else if (!auto and !pause) {
+			} else if (!auto and active) {
 				var vs_int_man = getprop("/systems/pressurization/vs-norm");
 				if (vs_int_man == nil) vs_int_man = vs_cmd;
 				step = vs_int_man * dt / 60;
