@@ -32,6 +32,7 @@ var boot_prev_altp = nil;
 var boot_stable_s = 0;
 var boot_seen_valid_altp = 0;
 var boot_fire_elapsed = 0;
+var boot_anchor_altp = nil;
 
 # Main class
 var PNEU = {
@@ -273,23 +274,31 @@ var PNEU = {
 		if (boot_done == 0 and boot_expired == 0 and on_ground and !pause) {
 			if (boot_t0 != nil and now != nil and (now - boot_t0) > 30) boot_expired = 1;
 			if (boot_expired == 0) {
+				var dt_boot = dt;
+				if (dt_boot == nil) dt_boot = 0.1;
+				if (dt_boot < 0.01) dt_boot = 0.01;
+				if (dt_boot > 0.3) dt_boot = 0.3;
 				var altp = getprop("/instrumentation/altimeter/pressure-alt-ft");
 				if (altp == nil) {
 					boot_stable_s = 0;
+					boot_anchor_altp = nil;
 				} else {
 					if (math.abs(altp) > 1 and math.abs(altp) < 60000) boot_seen_valid_altp = 1;
 					if (boot_seen_valid_altp == 1) {
-						if (boot_prev_altp != nil and math.abs(altp - boot_prev_altp) < 2) {
-							boot_stable_s += dt;
+						if (boot_anchor_altp == nil) boot_anchor_altp = altp;
+						if (boot_prev_altp != nil and math.abs(altp - boot_prev_altp) < 2 and math.abs(altp - boot_anchor_altp) < 5) {
+							boot_stable_s += dt_boot;
 						} else {
 							boot_stable_s = 0;
+							boot_anchor_altp = altp;
 						}
 					}
 					boot_prev_altp = altp;
 				}
 				var gs = getprop("/velocities/groundspeed-kt");
 				if (gs == nil) gs = 0;
-				if (boot_seen_valid_altp == 1 and boot_stable_s >= 1.0 and gs < 5) {
+				# require 2 seconds of stable pressure altitude to avoid transient snap during sensor spin-up
+				if (boot_seen_valid_altp == 1 and boot_stable_s >= 2.0 and gs < 5) {
 					var ref = eq_targetalt;
 					if (ref == nil) ref = altp;
 					if (ref == nil) ref = getprop("/position/altitude-ft");
