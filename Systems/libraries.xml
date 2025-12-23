@@ -425,7 +425,7 @@
 				</table>
 			</expression>
 		</input>
-		<output>/systems/pressurization/ambientpsi-isa</output>
+		<output>/systems/pressurization/ambientpsi</output>
 	</filter>
 
 	<filter>

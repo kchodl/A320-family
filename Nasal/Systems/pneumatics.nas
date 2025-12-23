@@ -346,14 +346,9 @@ var PNEU = {
 		setprop("/systems/pressurization/dt-used", dt);
 		var ambient_prev = ambient;
 		if (ambient_prev == nil) ambient_prev = 14.7;
-		var p_static = getprop("/systems/static[0]/pressure-inhg");
-		if (p_static == nil) p_static = getprop("/environment/pressure-inhg");
-		var ambient_calc = nil;
-		if (p_static != nil) ambient_calc = p_static * 0.491154;
-		ambient = ambient_calc;
+		ambient = getprop("/systems/pressurization/ambientpsi");  # supplied by libraries.xml ISA table
 		if (ambient == nil) ambient = ambient_prev;
 		if (ambient == nil) ambient = 14.7;
-		setprop("/systems/pressurization/ambientpsi", ambient);
 		if (cabinpsi == nil) cabinpsi = ambient;
 		if (cabinalt == nil) {
 			cabinalt = alt_press;
