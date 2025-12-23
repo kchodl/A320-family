@@ -23,6 +23,8 @@ var eng1_starter = nil;
 var eng2_starter = nil;
 var VS_MAX = 750;
 var last_press_elapsed = nil;
+var press_avail_latched = 1;
+var press_avail_drop_s = 0;
 
 # Main class
 var PNEU = {
@@ -242,9 +244,17 @@ var PNEU = {
 		setprop("/systems/pressurization/doors-open", doors_open);
 		var pack_factor = getprop("/systems/air-conditioning/packs/pack-factor");
 		if (pack_factor == nil) pack_factor = 1;
-		var press_avail = 0;
-		if (pack_factor != 0) press_avail = 1;
-		setprop("/systems/pressurization/press-avail", press_avail);
+		if (press_avail_drop_s == nil) press_avail_drop_s = 0;
+		var press_avail_inst = 0;
+		if (pack_factor != 0) press_avail_inst = 1;
+		if (press_avail_inst == 1) {
+			press_avail_latched = 1;
+			press_avail_drop_s = 0;
+		} else if (!on_ground) {
+			press_avail_drop_s += dt;
+			if (press_avail_drop_s >= 1.0) press_avail_latched = 0;
+		}
+		setprop("/systems/pressurization/press-avail", press_avail_latched);
 		var eq_mode = 0;
 		if (on_ground and !pause) eq_mode = 1;
 		setprop("/systems/pressurization/eq-mode", eq_mode);
@@ -314,7 +324,7 @@ var PNEU = {
 		
 		var diff = targetalt - cabinalt;
 		var commanded_vs = targetvs; # default to schedule
-		var active = (!pause) and ((press_avail == 1) or on_ground);
+		var active = (!pause) and ((press_avail_latched == 1) or on_ground);
 		if (auto and active) {
 			var alt_above_ldg = alt_ind - landing_elev;
 			if (alt_above_ldg < 0) alt_above_ldg = 0;
