@@ -23,7 +23,7 @@ var eng1_starter = nil;
 var eng2_starter = nil;
 var VS_MAX = 750;
 var last_press_elapsed = nil;
-var press_avail_latched = 1;
+var press_avail_latched = 0;
 var press_avail_drop_s = 0;
 
 # Main class
@@ -243,7 +243,7 @@ var PNEU = {
 		if (door_l1 > 0.001 or door_l4 > 0.001 or door_r1 > 0.001 or door_r4 > 0.001) doors_open = 1;
 		setprop("/systems/pressurization/doors-open", doors_open);
 		var pack_factor = getprop("/systems/air-conditioning/packs/pack-factor");
-		if (pack_factor == nil) pack_factor = 1;
+		if (pack_factor == nil) pack_factor = 0;
 		if (press_avail_drop_s == nil) press_avail_drop_s = 0;
 		var press_avail_inst = 0;
 		if (pack_factor != 0) press_avail_inst = 1;
@@ -253,6 +253,9 @@ var PNEU = {
 		} else if (!on_ground) {
 			press_avail_drop_s += dt;
 			if (press_avail_drop_s >= 1.0) press_avail_latched = 0;
+		} else {
+			press_avail_latched = 0;
+			press_avail_drop_s = 0;
 		}
 		setprop("/systems/pressurization/press-avail", press_avail_latched);
 		var eq_mode = 0;
