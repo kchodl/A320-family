@@ -1,1 +1,2 @@
 				<script>setprop("sim/sound/switch1", 1);</script>
+				<!-- Switch sound via /sim/sound/switch1 -->
