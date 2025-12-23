@@ -325,7 +325,16 @@ var PNEU = {
 		var diff = targetalt - cabinalt;
 		var commanded_vs = targetvs; # default to schedule
 		var active = (!pause) and ((press_avail_latched == 1) or on_ground);
-		if (auto and active) {
+		if (eq_mode == 1 and active) {
+			var TAU_MIN = 0.5; # minutes
+			var VS_EQ_MAX = 250; # fpm clamp for equalization
+			var commanded_vs_eq = diff / TAU_MIN;
+			if (commanded_vs_eq > VS_EQ_MAX) commanded_vs_eq = VS_EQ_MAX;
+			if (commanded_vs_eq < -VS_EQ_MAX) commanded_vs_eq = -VS_EQ_MAX;
+			commanded_vs = commanded_vs_eq;
+			if (commanded_vs > VS_MAX) commanded_vs = VS_MAX;
+			if (commanded_vs < -VS_MAX) commanded_vs = -VS_MAX;
+		} else if (auto and active) {
 			var alt_above_ldg = alt_ind - landing_elev;
 			if (alt_above_ldg < 0) alt_above_ldg = 0;
 			var vs_floor = 750; # fpm for time metric
