@@ -304,17 +304,23 @@ var PNEU = {
 					if (ref == nil) ref = getprop("/position/altitude-ft");
 					if (ref == nil) ref = 0;
 					var cab = cabinalt;
-					if (cab == nil) cab = ref;
-					if ((cab < 50) or (math.abs(ref - cab) > 20)) {
-						cabinalt = ref;
-						targetalt = ref;
-						setprop("/systems/pressurization/cabinalt", cabinalt);
-						setprop("/systems/pressurization/targetalt", targetalt);
-						boot_done = 1;
-						if (now != nil) boot_fire_elapsed = now;
+						if (cab == nil) cab = ref;
+						if ((cab < 50) or (math.abs(ref - cab) > 20)) {
+							cabinalt = ref;
+							targetalt = ref;
+							setprop("/systems/pressurization/cabinalt", cabinalt);
+							setprop("/systems/pressurization/targetalt", targetalt);
+							var CABIN_ALT_MAX = 40500;
+							var ref_norm = ref;
+							if (ref_norm == nil) ref_norm = 0;
+							if (ref_norm < 0) ref_norm = 0;
+							if (ref_norm > CABIN_ALT_MAX) ref_norm = CABIN_ALT_MAX;
+							setprop("/systems/pressurization/cabinalt-norm", ref_norm);
+							boot_done = 1;
+							if (now != nil) boot_fire_elapsed = now;
+						}
 					}
 				}
-			}
 		}
 		setprop("/systems/pressurization/cabinalt-bootstrap-done", boot_done);
 		setprop("/systems/pressurization/cabinalt-bootstrap-fire-elapsed", boot_fire_elapsed);
