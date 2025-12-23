@@ -25,8 +25,13 @@ var VS_MAX = 750;
 var last_press_elapsed = nil;
 var press_avail_latched = 0;
 var press_avail_drop_s = 0;
-var cabinalt_bootstrap_done = 0;
-var cabinalt_bootstrap_t0 = nil;
+var boot_t0 = nil;
+var boot_done = 0;
+var boot_expired = 0;
+var boot_prev_altp = nil;
+var boot_stable_s = 0;
+var boot_seen_valid_altp = 0;
+var boot_fire_elapsed = 0;
 
 # Main class
 var PNEU = {
@@ -221,7 +226,6 @@ var PNEU = {
 			}
 			last_press_elapsed = now;
 		}
-		if (cabinalt_bootstrap_t0 == nil and now != nil) cabinalt_bootstrap_t0 = now;
 		if (dt == nil) dt = 0.1;
 		var alt_ind = getprop("/instrumentation/altimeter/indicated-altitude-ft");
 		if (alt_ind == nil) alt_ind = cabinalt;
@@ -265,30 +269,48 @@ var PNEU = {
 		if (on_ground and !pause) eq_mode = 1;
 		setprop("/systems/pressurization/eq-mode", eq_mode);
 		setprop("/systems/pressurization/eq-targetalt", eq_targetalt);
-		if (cabinalt_bootstrap_done == 0 and on_ground and !pause and now != nil and cabinalt_bootstrap_t0 != nil and (now - cabinalt_bootstrap_t0) <= 30) {
-			var ref = eq_targetalt;
-			var pos_alt = getprop("/position/altitude-ft");
-			if (ref == nil or math.abs(ref) <= 1) ref = ground_elev;
-			if (ref == nil or math.abs(ref) <= 1) ref = pos_alt;
-			if (ref == nil) ref = 0;
-			var sensors_ready = 0;
-			if ((ground_elev != nil and math.abs(ground_elev) > 1) or (eq_targetalt != nil and math.abs(eq_targetalt) > 1) or (pos_alt != nil and math.abs(pos_alt) > 1)) {
-				sensors_ready = 1;
-			}
-			var cab = cabinalt;
-			if (cab == nil) cab = 0;
-			var cab_uninit = (cab < 50);
-			var cab_far = (cab < 200 and math.abs(ref - cab) > 500);
-			var ref_ok = (ref > -1000 and ref < 20000);
-			if (ref_ok and sensors_ready and (cab_uninit or cab_far)) {
-				cabinalt = ref;
-				targetalt = ref;
-				setprop("/systems/pressurization/cabinalt", cabinalt);
-				setprop("/systems/pressurization/targetalt", targetalt);
-				cabinalt_bootstrap_done = 1;
+		if (boot_t0 == nil and now != nil) boot_t0 = now;
+		if (boot_done == 0 and boot_expired == 0 and on_ground and !pause) {
+			if (boot_t0 != nil and now != nil and (now - boot_t0) > 30) boot_expired = 1;
+			if (boot_expired == 0) {
+				var altp = getprop("/instrumentation/altimeter/pressure-alt-ft");
+				if (altp == nil) {
+					boot_stable_s = 0;
+				} else {
+					if (math.abs(altp) > 1 and math.abs(altp) < 60000) boot_seen_valid_altp = 1;
+					if (boot_seen_valid_altp == 1) {
+						if (boot_prev_altp != nil and math.abs(altp - boot_prev_altp) < 2) {
+							boot_stable_s += dt;
+						} else {
+							boot_stable_s = 0;
+						}
+					}
+					boot_prev_altp = altp;
+				}
+				var gs = getprop("/velocities/groundspeed-kt");
+				if (gs == nil) gs = 0;
+				if (boot_seen_valid_altp == 1 and boot_stable_s >= 1.0 and gs < 5) {
+					var ref = eq_targetalt;
+					if (ref == nil) ref = altp;
+					if (ref == nil) ref = getprop("/position/altitude-ft");
+					if (ref == nil) ref = 0;
+					var cab = cabinalt;
+					if (cab == nil) cab = ref;
+					if ((cab < 50) or (math.abs(ref - cab) > 20)) {
+						cabinalt = ref;
+						targetalt = ref;
+						setprop("/systems/pressurization/cabinalt", cabinalt);
+						setprop("/systems/pressurization/targetalt", targetalt);
+						boot_done = 1;
+						if (now != nil) boot_fire_elapsed = now;
+					}
+				}
 			}
 		}
-		setprop("/systems/pressurization/cabinalt-bootstrap-done", cabinalt_bootstrap_done);
+		setprop("/systems/pressurization/cabinalt-bootstrap-done", boot_done);
+		setprop("/systems/pressurization/cabinalt-bootstrap-fire-elapsed", boot_fire_elapsed);
+		setprop("/systems/pressurization/cabinalt-bootstrap-stable-s", boot_stable_s);
+		setprop("/systems/pressurization/cabinalt-bootstrap-expired", boot_expired);
 		if (gps_alt != nil and gps_alt > -1500 and gps_alt < 20000) {
 			var use_gps = 1;
 			if (ground_elev != nil) {
