@@ -1,1 +1,3 @@
 				<script>setprop("sim/sound/switch1", 1);</script>
+				<command>property-toggle</command>
+				<property>/sim/sound/switch1</property>
