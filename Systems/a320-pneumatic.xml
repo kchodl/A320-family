@@ -143,6 +143,14 @@
 			<test logic="OR" value="0">
 				/systems/pneumatics/source/engine-1-hp-psi lt 8
 				/systems/pneumatics/source/engine-1-hp-psi ge 120
+				<test logic="AND" value="0">
+					/systems/pneumatics/valves/engine-1-hp-valve-cmd eq 0
+					/systems/electrical/wing-anti-ice-left-open eq 0
+					/systems/pneumatics/source/engine-1-hp-psi gt 108
+					/position/altitude-ft ge 15000
+					/systems/pneumatics/valves/engine-1-prv-valve eq 1
+					/systems/pneumatics/valves/engine-2-prv-valve eq 1
+				</test>
 				<test logic="AND">
 					/systems/pneumatics/valves/wing-ice-1 eq 0
 					/systems/pneumatics/source/engine-1-hp-psi ge 110
@@ -176,6 +184,14 @@
 			<test logic="OR" value="0">
 				/systems/pneumatics/source/engine-2-hp-psi lt 8
 				/systems/pneumatics/source/engine-2-hp-psi ge 120
+				<test logic="AND" value="0">
+					/systems/pneumatics/valves/engine-2-hp-valve-cmd eq 0
+					/systems/electrical/wing-anti-ice-left-open eq 0
+					/systems/pneumatics/source/engine-2-hp-psi gt 108
+					/position/altitude-ft ge 15000
+					/systems/pneumatics/valves/engine-1-prv-valve eq 1
+					/systems/pneumatics/valves/engine-2-prv-valve eq 1
+				</test>
 				<test logic="AND">
 					/systems/pneumatics/valves/wing-ice-2 eq 0
 					/systems/pneumatics/source/engine-2-hp-psi ge 110
@@ -201,6 +217,34 @@
 			<default value="/systems/pneumatics/valves/engine-2-hp-valve-cmd"/>
 			<test value="/systems/pneumatics/valves/engine-2-hp-valve">
 				/systems/pneumatics/valves/engine-2-hp-valve-power eq 0
+			</test>
+		</switch>
+
+		<fcs_function name="/systems/pneumatics/valves/engine-1-lp-valve__computed">
+			<difference>
+				<input>1</input>
+				<input>/systems/pneumatics/valves/engine-1-hp-valve</input>
+			</difference>
+		</fcs_function>
+
+		<switch name="/systems/pneumatics/valves/engine-1-lp-valve">
+			<default value="/systems/pneumatics/valves/engine-1-lp-valve"/>
+			<test logic="AND" value="/systems/pneumatics/valves/engine-1-lp-valve__computed">
+				/systems/pneumatics/valves/engine-1-lp-valve-power eq 1
+			</test>
+		</switch>
+
+		<fcs_function name="/systems/pneumatics/valves/engine-2-lp-valve__computed">
+			<difference>
+				<input>1</input>
+				<input>/systems/pneumatics/valves/engine-2-hp-valve</input>
+			</difference>
+		</fcs_function>
+
+		<switch name="/systems/pneumatics/valves/engine-2-lp-valve">
+			<default value="/systems/pneumatics/valves/engine-2-lp-valve"/>
+			<test logic="AND" value="/systems/pneumatics/valves/engine-2-lp-valve__computed">
+				/systems/pneumatics/valves/engine-2-lp-valve-power eq 1
 			</test>
 		</switch>
 		
