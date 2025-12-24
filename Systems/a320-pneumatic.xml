@@ -131,7 +131,7 @@
 				/systems/pneumatics/source/engine-1-hp-psi ge 120
 				<test logic="AND" value="0">
 					/systems/pneumatics/valves/engine-1-hp-valve-cmd eq 0
-					/systems/electrical/wing-anti-ice-left-open eq 0
+					/systems/pneumatics/valves/wing-ice-1 eq 0
 					/systems/pneumatics/source/engine-1-hp-psi gt 108
 					/position/altitude-ft ge 15000
 					/systems/pneumatics/valves/engine-1-prv-valve eq 1
@@ -172,7 +172,7 @@
 				/systems/pneumatics/source/engine-2-hp-psi ge 120
 				<test logic="AND" value="0">
 					/systems/pneumatics/valves/engine-2-hp-valve-cmd eq 0
-					/systems/electrical/wing-anti-ice-right-open eq 0
+					/systems/pneumatics/valves/wing-ice-2 eq 0
 					/systems/pneumatics/source/engine-2-hp-psi gt 108
 					/position/altitude-ft ge 15000
 					/systems/pneumatics/valves/engine-1-prv-valve eq 1
