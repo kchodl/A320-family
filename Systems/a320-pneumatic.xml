@@ -103,13 +103,6 @@
 			</test>
 		</switch>
 		
-		<switch name="/systems/pneumatics/valves/engine-1-lp-valve">
-			<default value="/systems/pneumatics/valves/engine-1-lp-valve-cmd"/>
-			<test value="/systems/pneumatics/valves/engine-1-lp-valve">
-				/systems/pneumatics/valves/engine-1-lp-valve-power eq 0
-			</test>
-		</switch>
-		
 		<switch name="/systems/pneumatics/valves/engine-2-lp-valve-cmd">
 			<default value="1"/>
 			<test logic="AND" value="1">
@@ -127,13 +120,6 @@
 			</test>
 			<test logic="OR" value="1"> <!-- pneumatic, so instant nearly -->
 				/systems/electrical/bus/dc-2 ge 25
-			</test>
-		</switch>
-		
-		<switch name="/systems/pneumatics/valves/engine-2-lp-valve">
-			<default value="/systems/pneumatics/valves/engine-2-lp-valve-cmd"/>
-			<test value="/systems/pneumatics/valves/engine-2-lp-valve">
-				/systems/pneumatics/valves/engine-2-lp-valve-power eq 0
 			</test>
 		</switch>
 		
@@ -186,7 +172,7 @@
 				/systems/pneumatics/source/engine-2-hp-psi ge 120
 				<test logic="AND" value="0">
 					/systems/pneumatics/valves/engine-2-hp-valve-cmd eq 0
-					/systems/electrical/wing-anti-ice-left-open eq 0
+					/systems/electrical/wing-anti-ice-right-open eq 0
 					/systems/pneumatics/source/engine-2-hp-psi gt 108
 					/position/altitude-ft ge 15000
 					/systems/pneumatics/valves/engine-1-prv-valve eq 1
