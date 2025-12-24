@@ -207,10 +207,12 @@
 		</switch>
 
 		<fcs_function name="/systems/pneumatics/valves/engine-1-lp-valve__computed">
-			<difference>
-				<input>1</input>
-				<input>/systems/pneumatics/valves/engine-1-hp-valve</input>
-			</difference>
+			<function>
+				<difference>
+					<input>1</input>
+					<input>/systems/pneumatics/valves/engine-1-hp-valve</input>
+				</difference>
+			</function>
 		</fcs_function>
 
 		<switch name="/systems/pneumatics/valves/engine-1-lp-valve">
@@ -221,10 +223,12 @@
 		</switch>
 
 		<fcs_function name="/systems/pneumatics/valves/engine-2-lp-valve__computed">
-			<difference>
-				<input>1</input>
-				<input>/systems/pneumatics/valves/engine-2-hp-valve</input>
-			</difference>
+			<function>
+				<difference>
+					<input>1</input>
+					<input>/systems/pneumatics/valves/engine-2-hp-valve</input>
+				</difference>
+			</function>
 		</fcs_function>
 
 		<switch name="/systems/pneumatics/valves/engine-2-lp-valve">
