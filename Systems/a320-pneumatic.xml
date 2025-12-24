@@ -209,8 +209,8 @@
 		<fcs_function name="/systems/pneumatics/valves/engine-1-lp-valve__computed">
 			<function>
 				<difference>
-					<input>1</input>
-					<input>/systems/pneumatics/valves/engine-1-hp-valve</input>
+					<value>1</value>
+					<property>/systems/pneumatics/valves/engine-1-hp-valve</property>
 				</difference>
 			</function>
 		</fcs_function>
@@ -225,8 +225,8 @@
 		<fcs_function name="/systems/pneumatics/valves/engine-2-lp-valve__computed">
 			<function>
 				<difference>
-					<input>1</input>
-					<input>/systems/pneumatics/valves/engine-2-hp-valve</input>
+					<value>1</value>
+					<property>/systems/pneumatics/valves/engine-2-hp-valve</property>
 				</difference>
 			</function>
 		</fcs_function>
