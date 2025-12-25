@@ -99,6 +99,13 @@ var canvas_lowerECAMPageCruise =
 					obj["CABALT"].setColor(0.0509,0.7529,0.2941);
 				}
 			}),
+			props.UpdateManager.FromHashValue("ldgElev", 25, func(val) {
+				if (val == nil or val == 0) {
+					obj["LDGELEV"].setText("500");
+				} else {
+					obj["LDGELEV"].setText(sprintf("%s", math.round(val, 10)));
+				}
+			}),
 			props.UpdateManager.FromHashValue("condTempCockpit", 0.5, func(val) {
 				obj["CKPT-TEMP"].setText(sprintf("%2.0f",val));
 			}),

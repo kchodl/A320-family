@@ -52,6 +52,13 @@ var canvas_lowerECAMPagePress =
 					obj["PRESS-Cab-Alt"].setColor(0.0509,0.7529,0.2941);
 				}
 			}),
+			props.UpdateManager.FromHashValue("ldgElev", 25, func(val) {
+				if (val == nil or val == 0) {
+					obj["PRESS-LDG-Elev"].setText("500");
+				} else {
+					obj["PRESS-LDG-Elev"].setText(sprintf("%s", math.round(val, 10)));
+				}
+			}),
 			props.UpdateManager.FromHashValue("pressAuto", nil, func(val) {
 				if (val) {
 					obj["PRESS-Man"].hide();
@@ -215,6 +222,7 @@ var input = {
 	pressAuto: "/systems/pressurization/auto",
 	pressDelta: "/systems/pressurization/deltap-norm",
 	pressVS: "/systems/pressurization/vs-norm",
+	ldgElev: "/FMGC/internal/ldg-elev",
 	
 	flowCtlValve1: "/systems/air-conditioning/valves/flow-control-valve-1",
 	flowCtlValve2: "/systems/air-conditioning/valves/flow-control-valve-2",
