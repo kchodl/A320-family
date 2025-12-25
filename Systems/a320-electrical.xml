@@ -1164,7 +1164,10 @@
 				/systems/electrical/sources/apu/output-volt le 130
 				/systems/electrical/sources/apu/output-hertz ge 361
 				/systems/electrical/sources/apu/output-hertz le 435
-				/systems/electrical/relay/ext-epc/contact-pos eq 0
+				<test logic="OR">
+					/systems/electrical/relay/ext-epc/contact-pos eq 0
+					/controls/electrical/switches/ext-pwr eq 0
+				</test>
 				/systems/electrical/sources/apu/gcu-fault ne 1 <!-- software trip -->
 			</test>
 		</switch>
