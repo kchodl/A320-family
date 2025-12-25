@@ -137,25 +137,25 @@ var PNEU = {
 		
 		# Legacy pressurization system
 		setprop("/systems/pressurization/mode", "GN");
-		setprop("/systems/pressurization/vs", "0");
-		setprop("/systems/pressurization/targetvs", "0");
-		setprop("/systems/pressurization/vs-norm", "0");
+		setprop("/systems/pressurization/vs", 0);
+		setprop("/systems/pressurization/targetvs", 0);
+		setprop("/systems/pressurization/vs-norm", 0);
 		setprop("/systems/pressurization/auto", 1);
-		setprop("/systems/pressurization/deltap", "0");
-		setprop("/systems/pressurization/outflowpos", "0");
-		setprop("/systems/pressurization/deltap-norm", "0");
-		setprop("/systems/pressurization/outflowpos-norm", "0");
-		setprop("/systems/pressurization/outflowpos-man", "0.5");
-		setprop("/systems/pressurization/outflowpos-man-sw", "0");
-		setprop("/systems/pressurization/outflowpos-norm-cmd", "0");
+		setprop("/systems/pressurization/deltap", 0);
+		setprop("/systems/pressurization/outflowpos", 0);
+		setprop("/systems/pressurization/deltap-norm", 0);
+		setprop("/systems/pressurization/outflowpos-norm", 0);
+		setprop("/systems/pressurization/outflowpos-man", 0.5);
+		setprop("/systems/pressurization/outflowpos-man-sw", 0);
+		setprop("/systems/pressurization/outflowpos-norm-cmd", 0);
 		setprop("/systems/pressurization/cabinalt", pts.Instrumentation.Altimeter.indicatedFt.getValue());
 		setprop("/systems/pressurization/targetalt", pts.Instrumentation.Altimeter.indicatedFt.getValue()); 
-		setprop("/systems/pressurization/diff-to-target", "0");
+		setprop("/systems/pressurization/diff-to-target", 0);
 		setprop("/systems/pressurization/ditchingpb", 0);
-		setprop("/systems/pressurization/targetvs", "0");
+		setprop("/systems/pressurization/targetvs", 0);
 			setprop("/systems/pressurization/ambientpsi", 14.7);
 			setprop("/systems/pressurization/cabinpsi", 14.7);
-		setprop("/systems/pressurization/manvs-cmd", "0");
+		setprop("/systems/pressurization/manvs-cmd", 0);
 			var init_alt = pts.Instrumentation.Altimeter.indicatedFt.getValue();
 			if (init_alt == nil) init_alt = 0;
 			setprop("/systems/pressurization/landing-elev", init_alt);
