@@ -75,13 +75,13 @@
 		<actuator name="/ECAM/warnings/timer/prv-1-not-shut-apu-output">
 			<input>/ECAM/warnings/logic/prv-1-not-shut-apu</input>
 			<rate_limit sense="decr">120</rate_limit> <!-- Instant -->
-			<rate_limit sense="incr">1</rate_limit> <!-- 1 second -->
+			<rate_limit sense="incr">0.5</rate_limit> <!-- 2 seconds -->
 		</actuator>
 		
 		<actuator name="/ECAM/warnings/timer/prv-2-not-shut-apu-output">
 			<input>/ECAM/warnings/logic/prv-2-not-shut-apu</input>
 			<rate_limit sense="decr">120</rate_limit> <!-- Instant -->
-			<rate_limit sense="incr">1</rate_limit> <!-- 1 second -->
+			<rate_limit sense="incr">0.5</rate_limit> <!-- 2 seconds -->
 		</actuator>
 		
 		<actuator name="/ECAM/warnings/timer/prv-1-not-shut-output">
