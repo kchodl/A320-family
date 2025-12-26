@@ -141,11 +141,11 @@ var canvas_lowerECAMPageBleed =
 			}),
 			props.UpdateManager.FromHashValue("BleedHPValve2Cmd", 1, func(val) {
 				if (val) {
-					obj["BLEED-HP-Valve-1"].setRotation(90 * D2R);
-					obj["BLEED-HP-1-connection"].show();
+					obj["BLEED-HP-Valve-2"].setRotation(90 * D2R);
+					obj["BLEED-HP-2-connection"].show();
 				} else {
-					obj["BLEED-HP-Valve-1"].setRotation(0);
-					obj["BLEED-HP-1-connection"].hide();
+					obj["BLEED-HP-Valve-2"].setRotation(0);
+					obj["BLEED-HP-2-connection"].hide();
 				}
 			}),
 			props.UpdateManager.FromHashValue("bleedHPValve1PositionMatch", 1, func(val) {
