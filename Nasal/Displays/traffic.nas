@@ -181,7 +181,7 @@ var TrafficLayer = {
             me.updateKeys = keys(me.items);
         }
         var path = pop(me.updateKeys);
-        if (path != nil) {
+        foreach (var path; keys(me.items)) {
             me.updateItem(path);
         }
     },
