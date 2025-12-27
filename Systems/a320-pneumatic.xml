@@ -901,7 +901,7 @@
 							<sum>
 								<property>/systems/pneumatics/valves/apu-bleed-valve</property>
 								<product>
-									<value>0.1</value>
+									<value>0.15</value>
 									<difference>
 										<value>1</value>
 										<property>/systems/pneumatics/valves/apu-bleed-valve</property>
@@ -935,7 +935,7 @@
 									<property>/systems/pneumatics/valves/crossbleed-valve</property>
 								</product>
 								<product>
-									<value>0.1</value>
+									<value>0.15</value>
 									<difference>
 										<value>1</value>
 										<product>
