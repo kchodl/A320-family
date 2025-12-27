@@ -895,8 +895,20 @@
 					<p>/systems/pneumatics/psi/engine-left-src</p>
 					<v>0</v>
 					<product>
-						<property>/systems/pneumatics/valves/apu-bleed-valve</property>
 						<property>/systems/pneumatics/source/apu-psi</property>
+						<quotient>
+							<property>/systems/pneumatics/valves/apu-bleed-valve</property>
+							<sum>
+								<property>/systems/pneumatics/valves/apu-bleed-valve</property>
+								<product>
+									<value>0.1</value>
+									<difference>
+										<value>1</value>
+										<property>/systems/pneumatics/valves/apu-bleed-valve</property>
+									</difference>
+								</product>
+							</sum>
+						</quotient>
 					</product>
 					<property>/systems/pneumatics/psi/engine-1-downstream-opv</property>
 					<property>/systems/pneumatics/psi/engine-2-psi</property>
@@ -911,9 +923,29 @@
 					<p>/systems/pneumatics/psi/engine-right-src</p>
 					<v>0</v>
 					<product>
-						<property>/systems/pneumatics/valves/apu-bleed-valve</property>
-						<property>/systems/pneumatics/valves/crossbleed-valve</property>
 						<property>/systems/pneumatics/source/apu-psi</property>
+						<quotient>
+							<product>
+								<property>/systems/pneumatics/valves/apu-bleed-valve</property>
+								<property>/systems/pneumatics/valves/crossbleed-valve</property>
+							</product>
+							<sum>
+								<product>
+									<property>/systems/pneumatics/valves/apu-bleed-valve</property>
+									<property>/systems/pneumatics/valves/crossbleed-valve</property>
+								</product>
+								<product>
+									<value>0.1</value>
+									<difference>
+										<value>1</value>
+										<product>
+											<property>/systems/pneumatics/valves/apu-bleed-valve</property>
+											<property>/systems/pneumatics/valves/crossbleed-valve</property>
+										</product>
+									</difference>
+								</product>
+							</sum>
+						</quotient>
 					</product>
 					<property>/systems/pneumatics/psi/engine-2-downstream-opv</property>
 					<property>/systems/pneumatics/psi/engine-1-psi</property>
