@@ -834,7 +834,7 @@
 		<switch name="/systems/pneumatics/psi/engine-left-src">
 			<default value="/systems/pneumatics/psi/engine-left-src"/>
 			<test logic="AND" value="1"> <!-- apu -->
-				/systems/pneumatics/source/apu-psi ne 0
+				/systems/pneumatics/source/apu-psi ge 5
 				/systems/pneumatics/valves/apu-bleed-valve ge 0.5
 			</test>
 			<test logic="AND" value="2"> <!-- left engine -->
@@ -853,16 +853,18 @@
 			<test logic="AND" value="4"> <!-- gnd has lowest priority, valve forced closed if other source available -->
 				/systems/pneumatics/source/gnd-psi ne 0
 			</test>
-			<test logic="AND" value="0"> <!-- manually cancel -->
-				/systems/pneumatics/source/apu-psi ne 0
-				/systems/pneumatics/valves/apu-bleed-valve eq 0
+			<test logic="AND" value="0"> <!-- clear APU latch -->
+				<test logic="OR">
+					/systems/pneumatics/source/apu-psi lt 5
+					/systems/pneumatics/valves/apu-bleed-valve lt 0.5
+				</test>
 			</test>
 		</switch>
 		
 		<switch name="/systems/pneumatics/psi/engine-right-src">
 			<default value="/systems/pneumatics/psi/engine-right-src"/>
 			<test logic="AND" value="1"> <!-- apu -->
-				/systems/pneumatics/source/apu-psi ne 0
+				/systems/pneumatics/source/apu-psi ge 5
 				/systems/pneumatics/valves/apu-bleed-valve ge 0.5
 				/systems/pneumatics/valves/crossbleed-valve ge 0.2
 			</test>
@@ -881,11 +883,14 @@
 			</test>
 			<test logic="AND" value="4"> <!-- gnd has lowest priority, valve forced closed if other source available -->
 				/systems/pneumatics/source/gnd-psi ne 0
-				/systems/pneumatics/valves/crossbleed-valve ge 0.2
+				/systems/pneumatics/valves/crossbleed-valve ge 0.25
 			</test>
-			<test logic="AND" value="0"> <!-- manually cancel -->
-				/systems/pneumatics/source/apu-psi ne 0
-				/systems/pneumatics/valves/crossbleed-valve lt 0.25
+			<test logic="AND" value="0"> <!-- clear APU latch -->
+			  <test logic="OR">
+				/systems/pneumatics/source/apu-psi lt 5
+				/systems/pneumatics/valves/apu-bleed-valve lt 0.5
+				/systems/pneumatics/valves/crossbleed-valve lt 0.2
+			  </test>
 			</test>
 		</switch>
 		
