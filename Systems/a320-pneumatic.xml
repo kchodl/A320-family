@@ -840,7 +840,7 @@
 			<test logic="AND" value="2"> <!-- left engine -->
 				<test logic="OR">
 					/systems/pneumatics/psi/engine-1-downstream-opv ge /systems/pneumatics/psi/engine-2-psi
-					/systems/pneumatics/valves/crossbleed-valve eq 0
+					/systems/pneumatics/valves/crossbleed-valve lt 0.25
 				</test>
 				/systems/pneumatics/valves/engine-1-prv-valve ge 0.2
 				/systems/pneumatics/valves/engine-1-opv-valve ge 0.2
@@ -869,7 +869,7 @@
 			<test logic="AND" value="2"> <!-- right engine -->
 				<test logic="OR">
 					/systems/pneumatics/psi/engine-2-downstream-opv ge /systems/pneumatics/psi/engine-1-psi
-					/systems/pneumatics/valves/crossbleed-valve eq 0
+					/systems/pneumatics/valves/crossbleed-valve lt 0.25
 				</test>
 				/systems/pneumatics/valves/engine-2-prv-valve ge 0.2
 				/systems/pneumatics/valves/engine-2-opv-valve ge 0.2
@@ -885,7 +885,7 @@
 			</test>
 			<test logic="AND" value="0"> <!-- manually cancel -->
 				/systems/pneumatics/source/apu-psi ne 0
-				/systems/pneumatics/valves/crossbleed-valve eq 0
+				/systems/pneumatics/valves/crossbleed-valve lt 0.25
 			</test>
 		</switch>
 		
