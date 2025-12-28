@@ -845,7 +845,7 @@
 				/systems/pneumatics/valves/engine-1-prv-valve ge 0.2
 				/systems/pneumatics/valves/engine-1-opv-valve ge 0.2
 			</test>
-			<test logic="AND" value="3"> <!-- left engine -->
+			<test logic="AND" value="3"> <!-- right engine -->
 				/systems/pneumatics/psi/engine-1-downstream-opv lt /systems/pneumatics/psi/engine-2-psi
 				/systems/pneumatics/valves/crossbleed-valve ge 0.2
 				/systems/pneumatics/psi/engine-right-src ne 3
