@@ -329,7 +329,7 @@
 				/controls/pneumatics/switches/bleed-2 eq 0
 				<test logic="AND">
 					/systems/pneumatics/valves/apu-bleed-valve eq 1
-					/systems/pneumatics/valves/crossbleed-valve ne 0
+					/systems/pneumatics/valves/crossbleed-valve eq 1
 				</test>
 				/systems/pneumatics/valves/starter-valve-2 ne 0
 				/systems/pneumatics/psi/engine-2-upstream-src lt 8
