@@ -844,7 +844,7 @@
 						/systems/pneumatics/psi/engine-2-downstream-prv eq 0
 					</test>
 					/systems/pneumatics/psi/engine-1-downstream-opv ge /systems/pneumatics/psi/engine-2-psi
-					/systems/pneumatics/valves/crossbleed-valve lt 0.25
+					/systems/pneumatics/valves/crossbleed-valve eq 0
 				</test>
 				/systems/pneumatics/valves/engine-1-prv-valve ne 0
 				/systems/pneumatics/valves/engine-1-opv-valve ne 0
@@ -877,7 +877,7 @@
 						/systems/pneumatics/psi/engine-1-downstream-prv eq 0
 					</test>
 					/systems/pneumatics/psi/engine-2-downstream-opv ge /systems/pneumatics/psi/engine-1-psi
-					/systems/pneumatics/valves/crossbleed-valve lt 0.25
+					/systems/pneumatics/valves/crossbleed-valve eq 0
 				</test>
 				/systems/pneumatics/valves/engine-2-prv-valve ne 0
 				/systems/pneumatics/valves/engine-2-opv-valve ne 0
