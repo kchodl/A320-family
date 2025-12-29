@@ -25,10 +25,10 @@
 		
 		<switch name="/systems/pneumatics/valves/apu-bleed-valve-power">
 			<default value="0"/>
-			<test logic="AND" value="1">
+			<test logic="AND" value="0.5">
 				/systems/startup-power-valves eq 1
 			</test>
-			<test logic="AND" value="1">
+			<test logic="AND" value="0.5">
 				/systems/failures/pneumatics/apu-valve eq 0
 				/systems/electrical/bus/dc-ess-shed ge 25 
 				<!-- confirm, some a320 have it on dc-bat, but this makes sense, since x-bleed is on ess shed too. 
