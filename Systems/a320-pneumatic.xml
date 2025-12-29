@@ -839,6 +839,10 @@
 			</test>
 			<test logic="AND" value="2"> <!-- left engine -->
 				<test logic="OR">
+					<test logic="OR">    <!--  crossbleed pressure not present  -->
+						/systems/pneumatics/psi/engine-2-downstream-opv eq 0
+						/systems/pneumatics/psi/engine-2-downstream-prv eq 0
+					</test>
 					/systems/pneumatics/psi/engine-1-downstream-opv ge /systems/pneumatics/psi/engine-2-psi
 					/systems/pneumatics/valves/crossbleed-valve eq 0
 				</test>
@@ -868,6 +872,10 @@
 			</test>
 			<test logic="AND" value="2"> <!-- right engine -->
 				<test logic="OR">
+					<test logic="OR">    <!--  crossbleed pressure not present  -->
+						/systems/pneumatics/psi/engine-1-downstream-opv eq 0
+						/systems/pneumatics/psi/engine-1-downstream-prv eq 0
+					</test>
 					/systems/pneumatics/psi/engine-2-downstream-opv ge /systems/pneumatics/psi/engine-1-psi
 					/systems/pneumatics/valves/crossbleed-valve eq 0
 				</test>
