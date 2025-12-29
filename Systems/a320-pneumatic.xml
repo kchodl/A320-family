@@ -329,7 +329,16 @@
 				/controls/pneumatics/switches/bleed-2 eq 0
 				<test logic="AND">
 					/systems/pneumatics/valves/apu-bleed-valve eq 1
-					/systems/pneumatics/valves/crossbleed-valve ge 0.65     <!--  tuned againts crossbleed-valve threshold in source selector -->
+					<test logic="OR"> <!-- crossbleed hysteresis: closing>=0.65, opening>=0.35 -->
+						<test logic="AND">
+							/systems/pneumatics/valves/crossbleed-valve-cmd eq 0
+							/systems/pneumatics/valves/crossbleed-valve ge 0.65
+						</test>
+						<test logic="AND">
+							/systems/pneumatics/valves/crossbleed-valve-cmd eq 1
+							/systems/pneumatics/valves/crossbleed-valve ge 0.35
+						</test>
+					</test>
 				</test>
 				/systems/pneumatics/valves/starter-valve-2 ne 0
 				/systems/pneumatics/psi/engine-2-upstream-src lt 8
