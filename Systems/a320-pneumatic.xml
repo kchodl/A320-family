@@ -329,7 +329,7 @@
 				/controls/pneumatics/switches/bleed-2 eq 0
 				<test logic="AND">
 					/systems/pneumatics/valves/apu-bleed-valve eq 1
-					/systems/pneumatics/valves/crossbleed-valve eq 1
+					/systems/pneumatics/valves/crossbleed-valve ge 0.65     <!--  tuned againts crossbleed-valve threshold in source selector -->
 				</test>
 				/systems/pneumatics/valves/starter-valve-2 ne 0
 				/systems/pneumatics/psi/engine-2-upstream-src lt 8
@@ -868,7 +868,7 @@
 			<test logic="AND" value="1"> <!-- apu -->
 				/systems/pneumatics/source/apu-psi ne 0
 				/systems/pneumatics/valves/apu-bleed-valve ge 0.5
-				/systems/pneumatics/valves/crossbleed-valve ge 0.5
+				/systems/pneumatics/valves/crossbleed-valve ge 0.5     <!--  tuned againts crossbleed-valve threshold in PRV2 cmd -->
 			</test>
 			<test logic="AND" value="2"> <!-- right engine -->
 				<test logic="OR">
