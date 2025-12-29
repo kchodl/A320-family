@@ -868,7 +868,7 @@
 			<test logic="AND" value="1"> <!-- apu -->
 				/systems/pneumatics/source/apu-psi ne 0
 				/systems/pneumatics/valves/apu-bleed-valve ge 0.5
-				/systems/pneumatics/valves/crossbleed-valve ne 0
+				/systems/pneumatics/valves/crossbleed-valve ge 0.5
 			</test>
 			<test logic="AND" value="2"> <!-- right engine -->
 				<test logic="OR">
